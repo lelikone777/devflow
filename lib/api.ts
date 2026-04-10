@@ -4,8 +4,31 @@ import { IUser } from "@/database/user.model";
 
 import { fetchHandler } from "./handlers/fetch";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+
+  if (typeof window !== "undefined") {
+    return "/api";
+  }
+
+  if (process.env.AUTH_URL) {
+    return `${process.env.AUTH_URL.replace(/\/$/, "")}/api`;
+  }
+
+  if (process.env.NEXTAUTH_URL) {
+    return `${process.env.NEXTAUTH_URL.replace(/\/$/, "")}/api`;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}/api`;
+  }
+
+  return "http://localhost:3000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const api = {
   auth: {
