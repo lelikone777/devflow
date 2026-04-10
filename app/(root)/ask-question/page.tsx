@@ -3,7 +3,7 @@ import React from "react";
 
 import { auth } from "@/auth";
 import QuestionForm from "@/components/forms/QuestionForm";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 const AskQuestion = async () => {
   const session = await auth();

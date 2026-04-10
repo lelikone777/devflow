@@ -3,8 +3,7 @@ import localFont from "next/font/local";
 import { ReactNode } from "react";
 
 import "./globals.css";
-import AppProviders from "@/components/providers/AppProviders";
-import { getServerLocale } from "@/lib/i18n";
+import { getServerLocale } from "@/lib/i18n-server";
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -30,7 +29,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <html lang={locale}>
       <body className={`${inter.className} ${spaceGrotesk.variable} antialiased`}>
-        <AppProviders locale={locale}>{children}</AppProviders>
+        {children}
       </body>
     </html>
   );

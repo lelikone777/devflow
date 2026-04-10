@@ -5,7 +5,7 @@ import React from "react";
 
 import { auth, signOut } from "@/auth";
 import ROUTES from "@/constants/routes";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 import NavLinks from "./navbar/NavLinks";
 import { Button } from "../ui/button";

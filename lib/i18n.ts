@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-
 export const locales = ["en", "ru"] as const;
 export type Locale = (typeof locales)[number];
 
@@ -363,19 +361,3 @@ export const getMessage = (locale: Locale, key: string): string =>
   getMessages(locale)[key] ??
   messages[DEFAULT_LOCALE][key] ??
   key;
-
-export const getServerLocale = async (): Promise<Locale> => {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
-
-  return locale && isLocale(locale) ? locale : DEFAULT_LOCALE;
-};
-
-export const getServerTranslator = async () => {
-  const locale = await getServerLocale();
-
-  return {
-    locale,
-    t: (key: string) => getMessage(locale, key),
-  };
-};

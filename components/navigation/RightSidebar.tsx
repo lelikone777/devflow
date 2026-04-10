@@ -5,7 +5,7 @@ import React from "react";
 import ROUTES from "@/constants/routes";
 import { getHotQuestions } from "@/lib/actions/question.action";
 import { getTopTags } from "@/lib/actions/tag.actions";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 import TagCard from "../cards/TagCard";
 import DataRenderer from "../DataRenderer";

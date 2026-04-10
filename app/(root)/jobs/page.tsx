@@ -6,7 +6,7 @@ import {
   fetchJobs,
   fetchLocation,
 } from "@/lib/actions/job.action";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 const Page = async ({ searchParams }: RouteParams) => {
   const { t, locale } = await getServerTranslator();

@@ -7,7 +7,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
 
 import {
   DEFAULT_LOCALE,
@@ -23,7 +22,13 @@ interface LanguageContextValue {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextValue | null>(null);
+const fallbackContext: LanguageContextValue = {
+  locale: DEFAULT_LOCALE,
+  setLocale: () => {},
+  t: (key: string) => getMessage(DEFAULT_LOCALE, key),
+};
+
+const LanguageContext = createContext<LanguageContextValue>(fallbackContext);
 
 interface LanguageProviderProps {
   children: ReactNode;
@@ -34,7 +39,6 @@ export const LanguageProvider = ({
   children,
   locale: initialLocale,
 }: LanguageProviderProps) => {
-  const router = useRouter();
   const [locale, setCurrentLocale] = useState<Locale>(initialLocale);
 
   const value = useMemo<LanguageContextValue>(
@@ -43,11 +47,14 @@ export const LanguageProvider = ({
       setLocale: (nextLocale) => {
         setCurrentLocale(nextLocale);
         document.cookie = `${LOCALE_COOKIE_NAME}=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
-        router.refresh();
+
+        // Avoid relying on App Router context so the provider remains safe in
+        // special render paths like global error boundaries.
+        window.location.reload();
       },
       t: (key: string) => getMessage(locale, key),
     }),
-    [locale, router]
+    [locale]
   );
 
   return (
@@ -58,13 +65,7 @@ export const LanguageProvider = ({
 };
 
 export const useLanguage = () => {
-  const context = useContext(LanguageContext);
-
-  if (!context) {
-    throw new Error("useLanguage must be used within LanguageProvider");
-  }
-
-  return context;
+  return useContext(LanguageContext);
 };
 
 export const useTranslations = () => useLanguage().t;

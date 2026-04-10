@@ -6,7 +6,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { UserFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_USERS } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 import { getUsers } from "@/lib/actions/user.action";
 
 const Community = async ({ searchParams }: RouteParams) => {

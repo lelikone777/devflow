@@ -6,7 +6,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 import { getTags } from "@/lib/actions/tag.action";
 
 const Tags = async ({ searchParams }: RouteParams) => {

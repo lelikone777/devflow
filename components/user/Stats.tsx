@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { getServerTranslator } from "@/lib/i18n";
+import { getServerTranslator } from "@/lib/i18n-server";
 import { formatNumber } from "@/lib/utils";
 
 interface StatsCardProps {
