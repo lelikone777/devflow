@@ -1,13 +1,90 @@
+import mongoose from "mongoose";
+import slugify from "slugify";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 
-import { IAccountDoc } from "./database/account.model";
-import { IUserDoc } from "./database/user.model";
-import { api } from "./lib/api";
+import Account, { IAccountDoc } from "./database/account.model";
+import User, { IUserDoc } from "./database/user.model";
+import dbConnect from "./lib/mongoose";
 import { SignInSchema } from "./lib/validations";
+
+async function syncOAuthAccount({
+  provider,
+  providerAccountId,
+  user,
+}: SignInWithOAuthParams) {
+  await dbConnect();
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const slugifiedUsername = slugify(user.username, {
+      lower: true,
+      strict: true,
+      trim: true,
+    });
+
+    let existingUser = await User.findOne({ email: user.email }).session(session);
+
+    if (!existingUser) {
+      [existingUser] = await User.create(
+        [
+          {
+            name: user.name,
+            username: slugifiedUsername,
+            email: user.email,
+            image: user.image,
+          },
+        ],
+        { session }
+      );
+    } else {
+      const updatedData: { name?: string; image?: string } = {};
+
+      if (existingUser.name !== user.name) updatedData.name = user.name;
+      if (existingUser.image !== user.image) updatedData.image = user.image;
+
+      if (Object.keys(updatedData).length > 0) {
+        await User.updateOne(
+          { _id: existingUser._id },
+          { $set: updatedData }
+        ).session(session);
+      }
+    }
+
+    const existingAccount = await Account.findOne({
+      provider,
+      providerAccountId,
+    }).session(session);
+
+    if (!existingAccount) {
+      await Account.create(
+        [
+          {
+            userId: existingUser._id,
+            name: user.name,
+            image: user.image,
+            provider,
+            providerAccountId,
+          },
+        ],
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+    return true;
+  } catch {
+    await session.abortTransaction();
+    return false;
+  } finally {
+    await session.endSession();
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -19,16 +96,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
+          await dbConnect();
 
-          const { data: existingAccount } = (await api.accounts.getByProvider(
-            email
-          )) as ActionResponse<IAccountDoc>;
+          const existingAccount = (await Account.findOne({
+            provider: "credentials",
+            providerAccountId: email,
+          }).lean()) as IAccountDoc | null;
 
           if (!existingAccount) return null;
 
-          const { data: existingUser } = (await api.users.getById(
-            existingAccount.userId.toString()
-          )) as ActionResponse<IUserDoc>;
+          const existingUser = (await User.findById(
+            existingAccount.userId
+          ).lean()) as IUserDoc | null;
 
           if (!existingUser) return null;
 
@@ -57,14 +136,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, account }) {
       if (account) {
-        const { data: existingAccount, success } =
-          (await api.accounts.getByProvider(
-            account.type === "credentials"
-              ? token.email!
-              : account.providerAccountId
-          )) as ActionResponse<IAccountDoc>;
+        await dbConnect();
 
-        if (!success || !existingAccount) return token;
+        const existingAccount = (await Account.findOne({
+          provider: account.provider,
+          providerAccountId:
+            account.type === "credentials" ? token.email! : account.providerAccountId,
+        }).lean()) as IAccountDoc | null;
+
+        if (!existingAccount) return token;
 
         const userId = existingAccount.userId;
 
@@ -87,11 +167,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             : (user.name?.toLowerCase() as string),
       };
 
-      const { success } = (await api.auth.oAuthSignIn({
+      const success = await syncOAuthAccount({
         user: userInfo,
         provider: account.provider as "github" | "google",
         providerAccountId: account.providerAccountId,
-      })) as ActionResponse;
+      });
 
       if (!success) return false;
 

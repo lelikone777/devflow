@@ -7,19 +7,26 @@ import dbConnect from "@/lib/mongoose";
 import { AccountSchema } from "@/lib/validations";
 
 export async function POST(request: Request) {
-  const { providerAccountId } = await request.json();
+  const { provider, providerAccountId } = await request.json();
 
   try {
     await dbConnect();
 
-    const validatedData = AccountSchema.partial().safeParse({
+    const validatedData = AccountSchema.pick({
+      provider: true,
+      providerAccountId: true,
+    }).safeParse({
+      provider,
       providerAccountId,
     });
 
     if (!validatedData.success)
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
 
-    const account = await Account.findOne({ providerAccountId });
+    const account = await Account.findOne({
+      provider,
+      providerAccountId,
+    });
     if (!account) throw new NotFoundError("Account");
 
     return NextResponse.json(

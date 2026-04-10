@@ -40,6 +40,7 @@ const dbConnect = async (): Promise<Mongoose> => {
         return result;
       })
       .catch((error) => {
+        cached.promise = null;
         logger.error("Error connecting to MongoDB", error);
         throw error;
       });
