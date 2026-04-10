@@ -16,10 +16,13 @@ interface Props {
 const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const currentPage = Number(page) || 1;
+
+  if (currentPage <= 1 && !isNext) return null;
 
   const handleNavigation = (type: "prev" | "next") => {
     const nextPageNumber =
-      type === "prev" ? Number(page) - 1 : Number(page) + 1;
+      type === "prev" ? currentPage - 1 : currentPage + 1;
 
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
@@ -38,7 +41,7 @@ const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
       )}
     >
       {/* Previous Page Button */}
-      {Number(page) > 1 && (
+      {currentPage > 1 && (
         <Button
           onClick={() => handleNavigation("prev")}
           className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border"
@@ -48,7 +51,7 @@ const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
       )}
 
       <div className="flex items-center justify-center rounded-md bg-primary-500 px-3.5 py-2">
-        <p className="body-semibold text-light-900">{page}</p>
+        <p className="body-semibold text-light-900">{currentPage}</p>
       </div>
 
       {/* Next Page Button */}

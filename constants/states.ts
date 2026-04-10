@@ -40,8 +40,7 @@ export const EMPTY_TAGS = {
 
 export const EMPTY_ANSWERS = {
   title: "No Answers Found",
-  message:
-    "The answer board is empty. Make it rain with your brilliant answer.",
+  message: "This user hasn't posted any answers yet.",
 };
 
 export const EMPTY_COLLECTIONS = {
