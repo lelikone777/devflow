@@ -106,7 +106,14 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
             description: "Question updated successfully",
           });
 
-          if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+          const editedQuestionId =
+            result.data && typeof result.data === "object" && "_id" in result.data
+              ? String((result.data as { _id: unknown })._id)
+              : "";
+
+          if (editedQuestionId) {
+            router.push(ROUTES.QUESTION(editedQuestionId));
+          }
         } else {
           toast({
             title: `Error ${result.status}`,
@@ -126,7 +133,14 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           description: "Question created successfully",
         });
 
-        if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+        const createdQuestionId =
+          result.data && typeof result.data === "object" && "_id" in result.data
+            ? String((result.data as { _id: unknown })._id)
+            : "";
+
+        if (createdQuestionId) {
+          router.push(ROUTES.QUESTION(createdQuestionId));
+        }
       } else {
         toast({
           title: `Error ${result.status}`,

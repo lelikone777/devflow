@@ -1,29 +1,19 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-import { FlatCompat } from "@eslint/eslintrc";
-import js from "@eslint/js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
+import prettier from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 
 const config = [
   {
-    ignores: ["components/ui/**/*"],
+    ignores: ["components/ui/**/*", ".next/**/*", "node_modules/**/*"],
   },
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-    "standard",
-    // "plugin:tailwindcss/recommended",
-    "prettier"
-  ),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  prettier,
   {
+    plugins: {
+      import: importPlugin,
+    },
     rules: {
       "import/order": [
         "error",
@@ -36,9 +26,7 @@ const config = [
             "index",
             "object",
           ],
-
           "newlines-between": "always",
-
           pathGroups: [
             {
               pattern: "@app/**",
@@ -46,9 +34,7 @@ const config = [
               position: "after",
             },
           ],
-
           pathGroupsExcludedImportTypes: ["builtin"],
-
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
@@ -60,7 +46,6 @@ const config = [
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
-
     rules: {
       "no-undef": "off",
     },

@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.9",
@@ -31,12 +31,11 @@
     "cm6-theme-basic-dark": "^0.2.0",
     "dayjs": "^1.11.13",
     "eslint-config-prettier": "^10.0.1",
-    "eslint-config-standard": "^17.1.0",
     "lucide-react": "^0.474.0",
     "mongoose": "^8.9.5",
     "next": "^16.2.3",
     "next-auth": "^5.0.0-beta.30",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "next-themes": "^0.4.4",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
@@ -50,9 +49,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.2.5",
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.19.0",
     "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/typography": "^0.5.15",
     "@types/bcryptjs": "^2.4.6",
