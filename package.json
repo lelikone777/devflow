@@ -32,7 +32,6 @@
     "dayjs": "^1.11.13",
     "eslint-config-prettier": "^10.0.1",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-tailwindcss": "^3.18.0",
     "lucide-react": "^0.474.0",
     "mongoose": "^8.9.5",
     "next": "15.1.6",
