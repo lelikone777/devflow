@@ -17,13 +17,13 @@ const Navbar = async () => {
       <Link href={ROUTES.HOME} className="flex items-center gap-1">
         <Image
           src="/images/site-logo.svg"
-          width={30}
-          height={30}
-          alt="DevFlow Logo"
+          width={23}
+          height={23}
+          alt="Dev Overflow Logo"
         />
 
         <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-          Dev<span className="text-primary-500">Flow</span>
+          Dev<span className="text-primary-500">Overflow</span>
         </p>
       </Link>
 

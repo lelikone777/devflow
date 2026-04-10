@@ -38,9 +38,9 @@ const MobileNavigation = async () => {
         <Link href="/" className="flex items-center gap-1">
           <Image
             src="/images/site-logo.svg"
-            width={30}
-            height={30}
-            alt="DevFlow Logo"
+            width={23}
+            height={23}
+            alt="Logo"
           />
 
           <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900">
