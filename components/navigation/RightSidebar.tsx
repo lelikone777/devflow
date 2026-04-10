@@ -5,11 +5,13 @@ import React from "react";
 import ROUTES from "@/constants/routes";
 import { getHotQuestions } from "@/lib/actions/question.action";
 import { getTopTags } from "@/lib/actions/tag.actions";
+import { getServerTranslator } from "@/lib/i18n";
 
 import TagCard from "../cards/TagCard";
 import DataRenderer from "../DataRenderer";
 
 const RightSidebar = async () => {
+  const { t } = await getServerTranslator();
   const [
     { success, data: hotQuestions, error },
     { success: tagSuccess, data: tags, error: tagError },
@@ -18,13 +20,15 @@ const RightSidebar = async () => {
   return (
     <section className="pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] flex-col gap-6 overflow-y-auto border-l p-6 shadow-light-300 dark:shadow-none max-xl:hidden">
       <div>
-        <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
+        <h3 className="h3-bold text-dark200_light900">
+          {t("sidebar.topQuestions")}
+        </h3>
 
         <DataRenderer
           data={hotQuestions}
           empty={{
-            title: "No questions found",
-            message: "No questions have been asked yet.",
+            title: t("sidebar.noQuestionsFound"),
+            message: t("sidebar.noQuestionsAsked"),
           }}
           success={success}
           error={error}
@@ -55,13 +59,15 @@ const RightSidebar = async () => {
       </div>
 
       <div className="mt-16">
-        <h3 className="h3-bold text-dark200_light900">Popular Tags</h3>
+        <h3 className="h3-bold text-dark200_light900">
+          {t("sidebar.popularTags")}
+        </h3>
 
         <DataRenderer
           data={tags}
           empty={{
-            title: "No tags found",
-            message: "No tags have been created yet.",
+            title: t("sidebar.noTagsFound"),
+            message: t("sidebar.noTagsCreated"),
           }}
           success={tagSuccess}
           error={tagError}

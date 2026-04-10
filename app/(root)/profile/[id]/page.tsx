@@ -14,6 +14,7 @@ import ProfileLink from "@/components/user/ProfileLink";
 import Stats from "@/components/user/Stats";
 import UserAvatar from "@/components/UserAvatar";
 import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
+import { getServerTranslator } from "@/lib/i18n";
 import {
   getUser,
   getUserAnswers,
@@ -23,6 +24,7 @@ import {
 } from "@/lib/actions/user.action";
 
 const ProfilePage = async ({ params, searchParams }: RouteParams) => {
+  const { t } = await getServerTranslator();
   const { id } = await params;
   const { page, pageSize } = await searchParams;
 
@@ -36,7 +38,9 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   if (!success)
     return (
       <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="h1-bold text-dark100_light900">User not found</h1>
+        <h1 className="h1-bold text-dark100_light900">
+          {t("profile.userNotFound")}
+        </h1>
         <p className="paragraph-regular text-dark200_light800 max-w-md">
           {error?.message}
         </p>
@@ -100,7 +104,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
                 <ProfileLink
                   imgUrl="/icons/link.svg"
                   href={user.portfolio}
-                  title="Portfolio"
+                  title={t("profile.portfolio")}
                 />
               )}
 
@@ -129,7 +133,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
           {loggedInUser?.user?.id === id && (
             <Link href="/profile/edit">
               <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-44 px-4 py-3">
-                Edit Profile
+                {t("profile.editProfile")}
               </Button>
             </Link>
           )}
@@ -147,10 +151,10 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
         <Tabs defaultValue="top-posts" className="flex-[2]">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">
             <TabsTrigger value="top-posts" className="tab">
-              Top Posts
+              {t("profile.topPosts")}
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
-              Answers
+              {t("profile.answers")}
             </TabsTrigger>
           </TabsList>
 
@@ -210,7 +214,9 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
         </Tabs>
 
         <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
-          <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
+          <h3 className="h3-bold text-dark200_light900">
+            {t("profile.topTags")}
+          </h3>
 
           <div className="mt-7 flex flex-col gap-4">
             <DataRenderer

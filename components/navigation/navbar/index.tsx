@@ -6,6 +6,7 @@ import GlobalSearch from "@/components/search/GlobalSearch";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
 
+import LanguageSwitcher from "./LanguageSwitcher";
 import MobileNavigation from "./MobileNavigation";
 import Theme from "./Theme";
 
@@ -30,6 +31,7 @@ const Navbar = async () => {
       <GlobalSearch />
 
       <div className="flex-between gap-5">
+        <LanguageSwitcher />
         <Theme />
         {session?.user?.id && (
           <UserAvatar

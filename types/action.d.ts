@@ -125,6 +125,19 @@ interface RecommendationParams {
 interface JobFilterParams {
   query: string;
   page: string;
+  country?: string;
+  location?: string;
+  datePosted?: "all" | "today" | "3days" | "week" | "month";
+  workFromHome?: boolean;
+  employmentTypes?: "FULLTIME" | "CONTRACTOR" | "PARTTIME" | "INTERN";
+  jobRequirements?:
+    | "under_3_years_experience"
+    | "more_than_3_years_experience"
+    | "no_experience"
+    | "no_degree";
+  radius?: string;
+  language?: string;
+  fields?: string;
 }
 
 interface UpdateUserParams {

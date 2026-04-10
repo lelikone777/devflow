@@ -10,6 +10,7 @@ import {
   SelectContent,
   SelectGroup,
 } from "@/components/ui/select";
+import { useTranslations } from "@/context/Language";
 import { formUrlQuery } from "@/lib/url";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +32,11 @@ const CommonFilter = ({
 }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   const paramsFilter = searchParams.get("filter");
+  const getFilterLabel = (value: string, fallback: string) =>
+    t(`filters.${value}`) === `filters.${value}` ? fallback : t(`filters.${value}`);
 
   const handleUpdateParams = (value: string) => {
     const newUrl = formUrlQuery({
@@ -55,10 +59,10 @@ const CommonFilter = ({
             "body-regular no-focus light-border background-light800_dark300 text-dark500_light700 border px-5 py-2.5",
             otherClasses
           )}
-          aria-label="Filter options"
+          aria-label={t("filters.select")}
         >
           <div className="line-clamp-1 flex-1 text-left">
-            <SelectValue placeholder="Select a filter" />
+            <SelectValue placeholder={t("filters.select")} />
           </div>
         </SelectTrigger>
 
@@ -66,7 +70,7 @@ const CommonFilter = ({
           <SelectGroup>
             {filters.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                {item.name}
+                {getFilterLabel(item.value, item.name)}
               </SelectItem>
             ))}
           </SelectGroup>

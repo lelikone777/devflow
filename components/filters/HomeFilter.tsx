@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+import { useTranslations } from "@/context/Language";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ const HomeFilter = () => {
   const searchParams = useSearchParams();
   const filterParams = searchParams.get("filter");
   const [active, setActive] = useState(filterParams || "");
+  const t = useTranslations();
 
   const handleTypeClick = (filter: string) => {
     let newUrl = "";
@@ -57,7 +59,7 @@ const HomeFilter = () => {
           )}
           onClick={() => handleTypeClick(filter.value)}
         >
-          {filter.name}
+          {t(`filters.${filter.value}`)}
         </Button>
       ))}
     </div>

@@ -16,13 +16,15 @@ const JobLocation = ({
 }: JobLocationProps) => {
   return (
     <div className="background-light800_dark400 flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5">
-      <Image
-        src={`https://flagsapi.com/${job_country}/flat/64.png`}
-        alt="country symbol"
-        width={16}
-        height={16}
-        className="rounded-full"
-      />
+      {job_country && (
+        <Image
+          src={`https://flagsapi.com/${job_country}/flat/64.png`}
+          alt="country symbol"
+          width={16}
+          height={16}
+          className="rounded-full"
+        />
+      )}
 
       <p className="body-medium text-dark400_light700">
         {job_city && `${job_city}, `}

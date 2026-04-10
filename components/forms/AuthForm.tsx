@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 
 interface AuthFormProps<T extends FieldValues> {
@@ -39,6 +40,7 @@ const AuthForm = <T extends FieldValues>({
   onSubmit,
 }: AuthFormProps<T>) => {
   const router = useRouter();
+  const t = useTranslations();
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -50,11 +52,11 @@ const AuthForm = <T extends FieldValues>({
 
     if (result?.success) {
       toast({
-        title: "Success",
+        title: t("common.success"),
         description:
           formType === "SIGN_IN"
-            ? "Signed in successfully"
-            : "Signed up successfully",
+            ? t("auth.signInSuccess")
+            : t("auth.signUpSuccess"),
       });
 
       router.push(ROUTES.HOME);
@@ -67,7 +69,8 @@ const AuthForm = <T extends FieldValues>({
     }
   };
 
-  const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
+  const translatedButtonText =
+    formType === "SIGN_IN" ? t("auth.signIn") : t("auth.signUp");
 
   return (
     <Form {...form}>
@@ -84,8 +87,8 @@ const AuthForm = <T extends FieldValues>({
               <FormItem className="flex w-full flex-col gap-2.5">
                 <FormLabel className="paragraph-medium text-dark400_light700">
                   {field.name === "email"
-                    ? "Email Address"
-                    : field.name.charAt(0).toUpperCase() + field.name.slice(1)}
+                    ? t("auth.emailAddress")
+                    : t(`auth.${field.name}`)}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -106,30 +109,30 @@ const AuthForm = <T extends FieldValues>({
           className="primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter !text-light-900"
         >
           {form.formState.isSubmitting
-            ? buttonText === "Sign In"
-              ? "Signin In..."
-              : "Signing Up..."
-            : buttonText}
+            ? formType === "SIGN_IN"
+              ? t("auth.signingIn")
+              : t("auth.signingUp")
+            : translatedButtonText}
         </Button>
 
         {formType === "SIGN_IN" ? (
           <p>
-            Don&apos;t have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <Link
               href={ROUTES.SIGN_UP}
               className="paragraph-semibold primary-text-gradient"
             >
-              Sign up
+              {t("auth.signUp")}
             </Link>
           </p>
         ) : (
           <p>
-            Already have an account?{" "}
+            {t("auth.alreadyHaveAccount")}{" "}
             <Link
               href={ROUTES.SIGN_IN}
               className="paragraph-semibold primary-text-gradient"
             >
-              Sign in
+              {t("auth.signIn")}
             </Link>
           </p>
         )}

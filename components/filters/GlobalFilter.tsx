@@ -4,11 +4,13 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { GlobalSearchFilters } from "@/constants/filters";
+import { useTranslations } from "@/context/Language";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
 
 const GlobalFilter = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   const typeParams = searchParams.get("type");
 
@@ -41,7 +43,9 @@ const GlobalFilter = () => {
 
   return (
     <div className="flex items-center gap-5 px-5">
-      <p className="text-dark400_light900 body-medium">Type:</p>
+      <p className="text-dark400_light900 body-medium">
+        {t("search.filterType")}
+      </p>
       <div className="flex gap-3">
         {GlobalSearchFilters.map((item) => (
           <button
@@ -54,7 +58,7 @@ const GlobalFilter = () => {
             }`}
             onClick={() => handleTypeClick(item.value)}
           >
-            {item.name}
+            {t(`filters.${item.value}`)}
           </button>
         ))}
       </div>

@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "@/context/Language";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
 
 import GlobalResult from "../GlobalResult";
@@ -19,6 +20,7 @@ const GlobalSearch = () => {
   const [search, setSearch] = useState(query || "");
   const [isOpen, setIsOpen] = useState(query || false);
   const searchContainerRef = useRef(null);
+  const t = useTranslations();
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -80,7 +82,7 @@ const GlobalSearch = () => {
 
         <Input
           type="text"
-          placeholder="Search anything globally..."
+          placeholder={t("search.globalPlaceholder")}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);

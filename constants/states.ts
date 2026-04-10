@@ -1,59 +1,56 @@
 import ROUTES from "./routes";
 
 export const DEFAULT_EMPTY = {
-  title: "No Data Found",
-  message:
-    "Looks like the database is taking a nap. Wake it up with some new entries.",
+  title: "states.defaultEmptyTitle",
+  message: "states.defaultEmptyMessage",
   button: {
-    text: "Add Data",
+    text: "states.addData",
     href: ROUTES.HOME,
   },
 };
 
 export const DEFAULT_ERROR = {
-  title: "Something Went Wrong",
-  message: "Even our code can have a bad day. Give it another shot.",
+  title: "states.defaultErrorTitle",
+  message: "states.defaultErrorMessage",
   button: {
-    text: "Retry Request",
+    text: "states.retryRequest",
     href: ROUTES.HOME,
   },
 };
 
 export const EMPTY_QUESTION = {
-  title: "Ahh, No Questions Yet!",
-  message:
-    "The question board is empty. Maybe it’s waiting for your brilliant question to get things rolling",
+  title: "states.noQuestionsTitle",
+  message: "states.noQuestionsMessage",
   button: {
-    text: "Ask a Question",
+    text: "states.askQuestion",
     href: ROUTES.ASK_QUESTION,
   },
 };
 
 export const EMPTY_TAGS = {
-  title: "No Tags Found",
-  message: "The tag cloud is empty. Add some keywords to make it rain.",
+  title: "states.noTagsTitle",
+  message: "states.noTagsMessage",
   button: {
-    text: "Create Tag",
+    text: "states.createTag",
     href: ROUTES.TAGS,
   },
 };
 
 export const EMPTY_ANSWERS = {
-  title: "No Answers Found",
-  message: "This user hasn't posted any answers yet.",
+  title: "states.noAnswersTitle",
+  message: "states.noAnswersMessage",
 };
 
 export const EMPTY_COLLECTIONS = {
-  title: "Collections Are Empty",
-  message:
-    "Looks like you haven’t created any collections yet. Start curating something extraordinary today",
+  title: "states.emptyCollectionsTitle",
+  message: "states.emptyCollectionsMessage",
   button: {
-    text: "Save to Collection",
+    text: "states.saveToCollection",
     href: ROUTES.COLLECTION,
   },
 };
 
 export const EMPTY_USERS = {
-  title: "No Users Found",
-  message: "You're ALONE. The only one here. More uses are coming soon!",
+  title: "states.noUsersTitle",
+  message: "states.noUsersMessage",
 };

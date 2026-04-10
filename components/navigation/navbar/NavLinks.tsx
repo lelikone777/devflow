@@ -7,6 +7,7 @@ import React from "react";
 
 import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
+import { useTranslations } from "@/context/Language";
 import { cn } from "@/lib/utils";
 
 const NavLinks = ({
@@ -17,23 +18,33 @@ const NavLinks = ({
   userId?: string;
 }) => {
   const pathname = usePathname();
+  const t = useTranslations();
 
   return (
     <>
       {sidebarLinks.map((item) => {
+        const route =
+          item.route === "/profile" && userId ? `${item.route}/${userId}` : item.route;
         const isActive =
-          (pathname.includes(item.route) && item.route.length > 1) ||
-          pathname === item.route;
+          (pathname.includes(route) && route.length > 1) || pathname === route;
 
-        if (item.route === "/profile") {
-          if (userId) item.route = `${item.route}/${userId}`;
-          else return null;
-        }
+        if (item.route === "/profile" && !userId) return null;
+
+        const labelMap: Record<string, string> = {
+          "/": "nav.home",
+          "/community": "nav.community",
+          "/collection": "nav.collections",
+          "/jobs": "nav.jobs",
+          "/tags": "nav.tags",
+          "/profile": "nav.profile",
+          "/ask-question": "nav.askQuestion",
+        };
+        const translatedLabel = t(labelMap[item.route] ?? item.label);
 
         const LinkComponent = (
           <Link
-            href={item.route}
-            key={item.label}
+            href={route}
+            key={route}
             className={cn(
               isActive
                 ? "primary-gradient rounded-lg text-light-900"
@@ -43,7 +54,7 @@ const NavLinks = ({
           >
             <Image
               src={item.imgURL}
-              alt={item.label}
+              alt={translatedLabel}
               width={20}
               height={20}
               className={cn({ "invert-colors": !isActive })}
@@ -54,17 +65,17 @@ const NavLinks = ({
                 !isMobileNav && "max-lg:hidden"
               )}
             >
-              {item.label}
+              {translatedLabel}
             </p>
           </Link>
         );
 
         return isMobileNav ? (
-          <SheetClose asChild key={item.route}>
+          <SheetClose asChild key={route}>
             {LinkComponent}
           </SheetClose>
         ) : (
-          <React.Fragment key={item.route}>{LinkComponent}</React.Fragment>
+          <React.Fragment key={route}>{LinkComponent}</React.Fragment>
         );
       })}
     </>

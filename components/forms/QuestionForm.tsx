@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import ROUTES from "@/constants/routes";
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
@@ -40,6 +41,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations();
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
@@ -65,12 +67,12 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
       } else if (tagInput.length > 15) {
         form.setError("tags", {
           type: "manual",
-          message: "Tag should be less than 15 characters",
+          message: t("questionForm.tagTooLong"),
         });
       } else if (field.value.includes(tagInput)) {
         form.setError("tags", {
           type: "manual",
-          message: "Tag already exists",
+          message: t("questionForm.tagExists"),
         });
       }
     }
@@ -84,7 +86,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
     if (newTags.length === 0) {
       form.setError("tags", {
         type: "manual",
-        message: "Tags are required",
+        message: t("questionForm.tagsRequired"),
       });
     }
   };
@@ -101,8 +103,8 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 
         if (result.success) {
           toast({
-            title: "Success",
-            description: "Question updated successfully",
+            title: t("common.success"),
+            description: t("questionForm.updated"),
           });
 
           const editedQuestionId =
@@ -128,8 +130,8 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Question created successfully",
+          title: t("common.success"),
+          description: t("questionForm.created"),
         });
 
         const createdQuestionId =
@@ -162,7 +164,8 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Question Title <span className="text-primary-500">*</span>
+                {t("questionForm.titleLabel")}{" "}
+                <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input
@@ -171,8 +174,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Be specific and imagine you&apos;re asking a question to another
-                person.
+                {t("questionForm.titleHelp")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -184,7 +186,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Detailed explanation of your problem{" "}
+                {t("questionForm.detailsLabel")}{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
@@ -195,8 +197,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Introduce the problem and expand on what you&apos;ve put in the
-                title.
+                {t("questionForm.detailsHelp")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -208,13 +209,14 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Tags <span className="text-primary-500">*</span>
+                {t("questionForm.tagsLabel")}{" "}
+                <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <div>
                   <Input
                     className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
-                    placeholder="Add tags..."
+                    placeholder={t("questionForm.tagsPlaceholder")}
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
                   {field.value.length > 0 && (
@@ -235,8 +237,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                 </div>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 3 tags to describe what your question is about. You
-                need to press enter to add a tag.
+                {t("questionForm.tagsHelp")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -252,10 +253,10 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
             {isPending ? (
               <>
                 <ReloadIcon className="mr-2 size-4 animate-spin" />
-                <span>Submitting</span>
+                <span>{t("questionForm.submitting")}</span>
               </>
             ) : (
-              <>{isEdit ? "Edit" : "Ask a Question"}</>
+              <>{isEdit ? t("questionForm.edit") : t("home.askQuestion")}</>
             )}
           </Button>
         </div>

@@ -10,7 +10,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
-import { EMPTY_QUESTION } from "@/constants/states";
+import { getServerTranslator } from "@/lib/i18n";
 import { getQuestions } from "@/lib/actions/question.action";
 
 export const metadata: Metadata = {
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 async function Home({ searchParams }: RouteParams) {
+  const { t } = await getServerTranslator();
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getQuestions({
@@ -34,13 +35,13 @@ async function Home({ searchParams }: RouteParams) {
   return (
     <>
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
+        <h1 className="h1-bold text-dark100_light900">{t("home.title")}</h1>
         <Button
           className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900"
           asChild
         >
           <Link href={ROUTES.ASK_QUESTION} className="max-sm:w-full">
-            Ask a Question
+            {t("home.askQuestion")}
           </Link>
         </Button>
       </section>
@@ -49,13 +50,16 @@ async function Home({ searchParams }: RouteParams) {
         <LocalSearch
           route={ROUTES.HOME}
           imgSrc="/icons/search.svg"
-          placeholder="Search questions..."
+          placeholder={t("home.searchPlaceholder")}
           iconPosition="left"
           otherClasses="flex-1"
         />
 
         <CommonFilter
-          filters={HomePageFilters}
+          filters={HomePageFilters.map((item) => ({
+            ...item,
+            name: t(`filters.${item.value}`),
+          }))}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-md:flex"
         />
@@ -67,7 +71,14 @@ async function Home({ searchParams }: RouteParams) {
         success={success}
         error={error}
         data={questions}
-        empty={EMPTY_QUESTION}
+        empty={{
+          title: t("states.noQuestionsTitle"),
+          message: t("states.noQuestionsMessage"),
+          button: {
+            text: t("states.askQuestion"),
+            href: ROUTES.ASK_QUESTION,
+          },
+        }}
         render={(questions) => (
           <div className="mt-10 flex w-full flex-col gap-6">
             {questions.map((question) => (

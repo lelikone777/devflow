@@ -6,6 +6,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { CollectionFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
+import { getServerTranslator } from "@/lib/i18n";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 
 interface SearchParams {
@@ -13,6 +14,7 @@ interface SearchParams {
 }
 
 const Collections = async ({ searchParams }: SearchParams) => {
+  const { t } = await getServerTranslator();
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getSavedQuestions({
@@ -26,18 +28,21 @@ const Collections = async ({ searchParams }: SearchParams) => {
 
   return (
     <>
-      <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
+      <h1 className="h1-bold text-dark100_light900">{t("collection.title")}</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route={ROUTES.COLLECTION}
           imgSrc="/icons/search.svg"
-          placeholder="Search questions..."
+          placeholder={t("home.searchPlaceholder")}
           otherClasses="flex-1"
         />
 
         <CommonFilter
-          filters={CollectionFilters}
+          filters={CollectionFilters.map((item) => ({
+            ...item,
+            name: t(`filters.${item.value}`),
+          }))}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>

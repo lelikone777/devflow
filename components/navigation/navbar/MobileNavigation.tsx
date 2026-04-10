@@ -12,12 +12,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import ROUTES from "@/constants/routes";
+import { getServerTranslator } from "@/lib/i18n";
 
 import NavLinks from "./NavLinks";
 
 const MobileNavigation = async () => {
   const session = await auth();
   const userId = session?.user?.id;
+  const { t } = await getServerTranslator();
 
   return (
     <Sheet>
@@ -40,7 +42,7 @@ const MobileNavigation = async () => {
             src="/images/site-logo.svg"
             width={23}
             height={23}
-            alt="Logo"
+            alt="DevFlow"
           />
 
           <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900">
@@ -70,7 +72,9 @@ const MobileNavigation = async () => {
                     className="base-medium w-fit !bg-transparent px-4 py-3"
                   >
                     <LogOut className="size-5 text-black dark:text-white" />
-                    <span className="text-dark300_light900">Logout</span>
+                    <span className="text-dark300_light900">
+                      {t("auth.logout")}
+                    </span>
                   </Button>
                 </form>
               </SheetClose>
@@ -79,7 +83,9 @@ const MobileNavigation = async () => {
                 <SheetClose asChild>
                   <Link href={ROUTES.SIGN_IN}>
                     <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                      <span className="primary-text-gradient">Log In</span>
+                      <span className="primary-text-gradient">
+                        {t("auth.login")}
+                      </span>
                     </Button>
                   </Link>
                 </SheetClose>
@@ -87,7 +93,7 @@ const MobileNavigation = async () => {
                 <SheetClose asChild>
                   <Link href={ROUTES.SIGN_UP}>
                     <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
-                      Sign Up
+                      {t("auth.signUp")}
                     </Button>
                   </Link>
                 </SheetClose>

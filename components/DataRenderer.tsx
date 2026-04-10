@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 import { DEFAULT_EMPTY, DEFAULT_ERROR } from "@/constants/states";
+import { getServerTranslator } from "@/lib/i18n";
 
 import { Button } from "./ui/button";
 
@@ -76,14 +77,25 @@ const StateSkeleton = ({
   </div>
 );
 
-const DataRenderer = <T,>({
+const DataRenderer = async <T,>({
   success,
   error,
   data,
   empty = DEFAULT_EMPTY,
   render,
 }: Props<T>) => {
+  const { t } = await getServerTranslator();
+  const translate = (key: string) => {
+    const translated = t(key);
+    return translated === key ? key : translated;
+  };
+
   if (!success) {
+    const title = error?.message || DEFAULT_ERROR.title;
+    const message = error?.details
+      ? JSON.stringify(error.details, null, 2)
+      : DEFAULT_ERROR.message;
+
     return (
       <StateSkeleton
         image={{
@@ -91,13 +103,16 @@ const DataRenderer = <T,>({
           dark: "/images/dark-error.png",
           alt: "Error state illustration",
         }}
-        title={error?.message || DEFAULT_ERROR.title}
-        message={
-          error?.details
-            ? JSON.stringify(error.details, null, 2)
-            : DEFAULT_ERROR.message
+        title={title}
+        message={message}
+        button={
+          empty.button
+            ? {
+                ...empty.button,
+                text: translate(empty.button.text),
+              }
+            : undefined
         }
-        button={empty.button}
       />
     );
   }
@@ -110,9 +125,16 @@ const DataRenderer = <T,>({
           dark: "/images/dark-illustration.png",
           alt: "Empty state illustration",
         }}
-        title={empty.title}
-        message={empty.message}
-        button={empty.button}
+        title={translate(empty.title)}
+        message={translate(empty.message)}
+        button={
+          empty.button
+            ? {
+                ...empty.button,
+                text: translate(empty.button.text),
+              }
+            : undefined
+        }
       />
     );
 

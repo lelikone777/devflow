@@ -6,9 +6,11 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
+import { getServerTranslator } from "@/lib/i18n";
 import { getTags } from "@/lib/actions/tag.action";
 
 const Tags = async ({ searchParams }: RouteParams) => {
+  const { t } = await getServerTranslator();
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getTags({
@@ -22,18 +24,23 @@ const Tags = async ({ searchParams }: RouteParams) => {
 
   return (
     <>
-      <h1 className="h1-bold text-dark100_light900 text-3xl">Tags</h1>
+      <h1 className="h1-bold text-dark100_light900 text-3xl">
+        {t("tags.title")}
+      </h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route={ROUTES.TAGS}
           imgSrc="/icons/search.svg"
-          placeholder="Search tags..."
+          placeholder={t("tags.searchPlaceholder")}
           otherClasses="flex-1"
         />
 
         <CommonFilter
-          filters={TagFilters}
+          filters={TagFilters.map((item) => ({
+            ...item,
+            name: t(`filters.${item.value}`),
+          }))}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>

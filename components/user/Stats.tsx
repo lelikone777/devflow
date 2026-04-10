@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { getServerTranslator } from "@/lib/i18n";
 import { formatNumber } from "@/lib/utils";
 
 interface StatsCardProps {
@@ -27,16 +28,18 @@ interface Props {
   reputationPoints: number;
 }
 
-const Stats = ({
+const Stats = async ({
   totalQuestions,
   totalAnswers,
   badges,
   reputationPoints,
 }: Props) => {
+  const { t } = await getServerTranslator();
+
   return (
     <div className="mt-10">
       <h4 className="h3-semibold text-dark200_light900">
-        Stats{" "}
+        {t("stats.title")}{" "}
         <span className="small-semibold primary-text-gradient">
           {formatNumber(reputationPoints)}
         </span>
@@ -48,33 +51,37 @@ const Stats = ({
             <p className="paragraph-semibold text-dark200_light900">
               {formatNumber(totalQuestions)}
             </p>
-            <p className="body-medium text-dark400_light700">Questions</p>
+            <p className="body-medium text-dark400_light700">
+              {t("stats.questions")}
+            </p>
           </div>
 
           <div>
             <p className="paragraph-semibold text-dark200_light900">
               {formatNumber(totalAnswers)}
             </p>
-            <p className="body-medium text-dark400_light700">Answers</p>
+            <p className="body-medium text-dark400_light700">
+              {t("stats.answers")}
+            </p>
           </div>
         </div>
 
         <StatsCard
           imgUrl="/icons/gold-medal.svg"
           value={badges.GOLD}
-          title="Gold Badges"
+          title={t("stats.goldBadges")}
         />
 
         <StatsCard
           imgUrl="/icons/silver-medal.svg"
           value={badges.SILVER}
-          title="Silver Badges"
+          title={t("stats.silverBadges")}
         />
 
         <StatsCard
           imgUrl="/icons/bronze-medal.svg"
           value={badges.BRONZE}
-          title="Bronze Badges"
+          title={t("stats.bronzeBadges")}
         />
       </div>
     </div>

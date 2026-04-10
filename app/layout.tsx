@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 
 import "./globals.css";
 import AppProviders from "@/components/providers/AppProviders";
+import { getServerLocale } from "@/lib/i18n";
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -23,11 +24,13 @@ export const metadata: Metadata = {
     "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
 };
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
+  const locale = await getServerLocale();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`${inter.className} ${spaceGrotesk.variable} antialiased`}>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders locale={locale}>{children}</AppProviders>
       </body>
     </html>
   );
