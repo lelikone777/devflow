@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { use, useState } from "react";
 
 import { toast } from "@/hooks/use-toast";
@@ -9,14 +8,13 @@ import { toggleSaveQuestion } from "@/lib/actions/collection.action";
 
 const SaveQuestion = ({
   questionId,
+  userId,
   hasSavedQuestionPromise,
 }: {
   questionId: string;
+  userId?: string;
   hasSavedQuestionPromise: Promise<ActionResponse<{ saved: boolean }>>;
 }) => {
-  const session = useSession();
-  const userId = session?.data?.user?.id;
-
   const { data } = use(hasSavedQuestionPromise);
 
   const { saved: hasSaved } = data || {};

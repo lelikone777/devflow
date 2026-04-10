@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
+import { auth } from "@/auth";
 import React, { Suspense } from "react";
 
 import AllAnswers from "@/components/answers/AllAnswers";
@@ -47,6 +48,8 @@ export async function generateMetadata({
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
   const { page, pageSize, filter } = await searchParams;
+  const session = await auth();
+  const userId = session?.user?.id;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
@@ -103,6 +106,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
                 upvotes={question.upvotes}
                 downvotes={question.downvotes}
                 targetId={question._id}
+                userId={userId}
                 hasVotedPromise={hasVotedPromise}
               />
             </Suspense>
@@ -110,6 +114,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
             <Suspense fallback={<div>Loading...</div>}>
               <SaveQuestion
                 questionId={question._id}
+                userId={userId}
                 hasSavedQuestionPromise={hasSavedQuestionPromise}
               />
             </Suspense>
@@ -174,6 +179,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
           questionId={question._id}
           questionTitle={question.title}
           questionContent={question.content}
+          userId={userId}
         />
       </section>
     </>

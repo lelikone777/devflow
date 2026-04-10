@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 
 import "./globals.css";
-import { auth } from "@/auth";
-import { Toaster } from "@/components/ui/toaster";
-import ThemeProvider from "@/context/Theme";
+import AppProviders from "@/components/providers/AppProviders";
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -24,38 +21,14 @@ export const metadata: Metadata = {
   title: "DevFlow",
   description:
     "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
-  icons: {
-    icon: "/images/site-logo.svg",
-  },
 };
 
-const RootLayout = async ({ children }: { children: ReactNode }) => {
-  const session = await auth();
-
+const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
-        />
-      </head>
-      <SessionProvider session={session}>
-        <body
-          className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
-        >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-          <Toaster />
-        </body>
-      </SessionProvider>
+    <html lang="en">
+      <body className={`${inter.className} ${spaceGrotesk.variable} antialiased`}>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 };

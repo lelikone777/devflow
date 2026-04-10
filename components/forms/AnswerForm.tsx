@@ -5,7 +5,6 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,12 +30,17 @@ interface Props {
   questionId: string;
   questionTitle: string;
   questionContent: string;
+  userId?: string;
 }
 
-const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
+const AnswerForm = ({
+  questionId,
+  questionTitle,
+  questionContent,
+  userId,
+}: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
-  const session = useSession();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -76,7 +80,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   };
 
   const generateAIAnswer = async () => {
-    if (session.status !== "authenticated") {
+    if (!userId) {
       return toast({
         title: "Please log in",
         description: "You need to be logged in to use this feature",

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { use, useState } from "react";
 
 import { toast } from "@/hooks/use-toast";
@@ -13,6 +12,7 @@ interface Params {
   targetId: string;
   upvotes: number;
   downvotes: number;
+  userId?: string;
   hasVotedPromise: Promise<ActionResponse<HasVotedResponse>>;
 }
 
@@ -20,12 +20,10 @@ const Votes = ({
   upvotes,
   downvotes,
   hasVotedPromise,
+  userId,
   targetId,
   targetType,
 }: Params) => {
-  const session = useSession();
-  const userId = session.data?.user?.id;
-
   const { success, data } = use(hasVotedPromise);
 
   const [isLoading, setIsLoading] = useState(false);
