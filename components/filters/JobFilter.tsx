@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -13,8 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "@/context/Language";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
-import { Input } from "@/components/ui/input";
+import { useUrlQuery } from "@/hooks/use-url-query";
 
 import LocalSearch from "../search/LocalSearch";
 
@@ -79,49 +78,63 @@ const RADIUS_OPTIONS = [
   { value: "100", labelKey: "", fallback: "100 km" },
 ] as const;
 
-const JobsFilter = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+interface LocationInputProps {
+  initialValue: string;
+}
+
+const LocationInput = ({ initialValue }: LocationInputProps) => {
+  const { pushQueryParam, removeQueryParams, getParam } = useUrlQuery();
   const t = useTranslations();
-  const [locationValue, setLocationValue] = useState(
-    searchParams.get("location") || ""
-  );
-
-  useEffect(() => {
-    setLocationValue(searchParams.get("location") || "");
-  }, [searchParams]);
-
-  const getLabel = (labelKey: string, fallback: string) =>
-    labelKey && t(labelKey) !== labelKey ? t(labelKey) : fallback;
-
-  const handleUpdateParams = (key: string, value: string) => {
-    const isEmpty = !value || value === "any";
-    const newUrl = isEmpty
-      ? removeKeysFromUrlQuery({
-          params: searchParams.toString(),
-          keysToRemove: [key],
-        })
-      : formUrlQuery({
-          params: searchParams.toString(),
-          key,
-          value,
-        });
-
-    router.push(newUrl, { scroll: false });
-  };
+  const [locationValue, setLocationValue] = useState(initialValue);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const currentLocation = searchParams.get("location") || "";
+      const currentLocation = getParam("location");
+      const nextLocation = locationValue.trim();
 
-      if (locationValue === currentLocation) return;
+      if (nextLocation === currentLocation) return;
 
-      handleUpdateParams("location", locationValue.trim());
+      if (!nextLocation) {
+        removeQueryParams(["location"]);
+        return;
+      }
+
+      pushQueryParam("location", nextLocation);
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [locationValue, searchParams]);
+  }, [getParam, locationValue, pushQueryParam, removeQueryParams]);
+
+  return (
+    <div className="background-light800_darkgradient flex min-h-[56px] min-w-[240px] grow items-center gap-4 rounded-[10px] px-4 sm:max-w-[320px]">
+      <Image
+        src="/icons/carbon-location.svg"
+        alt="location"
+        width={18}
+        height={18}
+      />
+
+      <Input
+        type="text"
+        placeholder={t("jobs.locationPlaceholder")}
+        value={locationValue}
+        onChange={(event) => setLocationValue(event.target.value)}
+        className="paragraph-regular no-focus text-dark400_light700 border-none shadow-none outline-none"
+      />
+    </div>
+  );
+};
+
+const JobsFilter = () => {
+  const { pathname, getParam, pushQueryParam } = useUrlQuery();
+  const t = useTranslations();
+  const getLabel = (labelKey: string, fallback: string) =>
+    labelKey && t(labelKey) !== labelKey ? t(labelKey) : fallback;
+  const handleUpdateParams = (key: string, value: string) =>
+    pushQueryParam(key, value === "any" ? "" : value, {
+      removeIfEmpty: true,
+    });
+  const currentLocation = getParam("location");
 
   return (
     <div className="relative mt-11 flex w-full flex-col gap-5">
@@ -134,22 +147,7 @@ const JobsFilter = () => {
       />
 
       <div className="flex flex-wrap gap-5">
-        <div className="background-light800_darkgradient flex min-h-[56px] min-w-[240px] grow items-center gap-4 rounded-[10px] px-4 sm:max-w-[320px]">
-          <Image
-            src="/icons/carbon-location.svg"
-            alt="location"
-            width={18}
-            height={18}
-          />
-
-          <Input
-            type="text"
-            placeholder={t("jobs.locationPlaceholder")}
-            value={locationValue}
-            onChange={(event) => setLocationValue(event.target.value)}
-            className="paragraph-regular no-focus text-dark400_light700 border-none shadow-none outline-none"
-          />
-        </div>
+        <LocationInput key={currentLocation} initialValue={currentLocation} />
 
         <Select value="us" disabled>
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] cursor-not-allowed border px-4 opacity-70 sm:max-w-[210px]">
@@ -172,7 +170,7 @@ const JobsFilter = () => {
         </Select>
 
         <Select
-          value={searchParams.get("datePosted") || "all"}
+          value={getParam("datePosted", "all")}
           onValueChange={(value) => handleUpdateParams("datePosted", value)}
         >
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[180px]">
@@ -192,7 +190,7 @@ const JobsFilter = () => {
         </Select>
 
         <Select
-          value={searchParams.get("remote") || "any"}
+          value={getParam("remote", "any")}
           onValueChange={(value) => handleUpdateParams("remote", value)}
         >
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[180px]">
@@ -212,7 +210,7 @@ const JobsFilter = () => {
         </Select>
 
         <Select
-          value={searchParams.get("employmentType") || "any"}
+          value={getParam("employmentType", "any")}
           onValueChange={(value) => handleUpdateParams("employmentType", value)}
         >
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[190px]">
@@ -232,7 +230,7 @@ const JobsFilter = () => {
         </Select>
 
         <Select
-          value={searchParams.get("requirement") || "any"}
+          value={getParam("requirement", "any")}
           onValueChange={(value) => handleUpdateParams("requirement", value)}
         >
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[190px]">
@@ -252,7 +250,7 @@ const JobsFilter = () => {
         </Select>
 
         <Select
-          value={searchParams.get("radius") || "any"}
+          value={getParam("radius", "any")}
           onValueChange={(value) => handleUpdateParams("radius", value)}
         >
           <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[170px]">

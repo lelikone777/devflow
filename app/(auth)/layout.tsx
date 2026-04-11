@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { ReactNode } from "react";
 
-import AppProviders from "@/components/providers/AppProviders";
 import SocialAuthForm from "@/components/forms/SocialAuthForm";
+import AppProviders from "@/components/providers/AppProviders";
 import { getServerLocale } from "@/lib/i18n-server";
 import { getServerTranslator } from "@/lib/i18n-server";
 

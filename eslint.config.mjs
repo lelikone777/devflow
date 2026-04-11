@@ -5,7 +5,12 @@ import importPlugin from "eslint-plugin-import";
 
 const config = [
   {
-    ignores: ["components/ui/**/*", ".next/**/*", "node_modules/**/*"],
+    ignores: [
+      "components/ui/**/*",
+      ".next/**/*",
+      "node_modules/**/*",
+      "scripts/**/*",
+    ],
   },
   ...nextCoreWebVitals,
   ...nextTypescript,

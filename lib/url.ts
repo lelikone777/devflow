@@ -1,42 +1,49 @@
-import qs from "query-string";
-
 interface UrlQueryParams {
   params: string;
   key: string;
   value: string;
+  pathname?: string;
 }
 
 interface RemoveUrlQueryParams {
   params: string;
   keysToRemove: string[];
+  pathname?: string;
 }
 
-export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
-  const queryString = qs.parse(params);
+function getBasePath(pathname?: string) {
+  return pathname ?? window.location.pathname;
+}
 
-  queryString[key] = value;
+function stringifyUrl(pathname: string, queryParams: URLSearchParams) {
+  const queryString = queryParams.toString();
 
-  return qs.stringifyUrl({
-    url: window.location.pathname,
-    query: queryString,
-  });
+  return queryString ? `${pathname}?${queryString}` : pathname;
+}
+
+export const formUrlQuery = ({
+  params,
+  key,
+  value,
+  pathname,
+}: UrlQueryParams) => {
+  const queryParams = new URLSearchParams(params);
+
+  queryParams.set(key, value);
+
+  return stringifyUrl(getBasePath(pathname), queryParams);
 };
 
 export const removeKeysFromUrlQuery = ({
   params,
   keysToRemove,
+  pathname,
 }: RemoveUrlQueryParams) => {
-  const queryString = qs.parse(params);
+  const queryParams = new URLSearchParams(params);
 
   keysToRemove.forEach((key) => {
-    delete queryString[key];
+    queryParams.delete(key);
   });
 
-  return qs.stringifyUrl(
-    {
-      url: window.location.pathname,
-      query: queryString,
-    },
-    { skipNull: true }
-  );
+  return stringifyUrl(getBasePath(pathname), queryParams);
 };

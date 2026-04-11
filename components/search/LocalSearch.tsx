@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+import { useUrlQuery } from "@/hooks/use-url-query";
 
 import { Input } from "../ui/input";
 
@@ -16,44 +15,35 @@ interface Props {
   iconPosition?: "left" | "right";
 }
 
-const LocalSearch = ({
+interface SearchFieldProps extends Props {
+  initialQuery: string;
+}
+
+const SearchField = ({
   route,
   imgSrc,
   placeholder,
   otherClasses,
-  iconPosition = "left",
-}: Props) => {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query") || "";
-
-  const [searchQuery, setSearchQuery] = useState(query);
+  iconPosition,
+  initialQuery,
+}: SearchFieldProps) => {
+  const { pathname, pushQueryParam, removeQueryParams } = useUrlQuery();
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (searchQuery) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "query",
-          value: searchQuery,
-        });
+      if (searchQuery.trim()) {
+        pushQueryParam("query", searchQuery.trim());
+        return;
+      }
 
-        router.push(newUrl, { scroll: false });
-      } else {
-        if (pathname === route) {
-          const newUrl = removeKeysFromUrlQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["query"],
-          });
-
-          router.push(newUrl, { scroll: false });
-        }
+      if (pathname === route) {
+        removeQueryParams(["query"]);
       }
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, router, route, searchParams, pathname]);
+  }, [pathname, pushQueryParam, removeQueryParams, route, searchQuery]);
 
   return (
     <div
@@ -73,7 +63,7 @@ const LocalSearch = ({
         type="text"
         placeholder={placeholder}
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(event) => setSearchQuery(event.target.value)}
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
       />
 
@@ -87,6 +77,29 @@ const LocalSearch = ({
         />
       )}
     </div>
+  );
+};
+
+const LocalSearch = ({
+  route,
+  imgSrc,
+  placeholder,
+  otherClasses,
+  iconPosition = "left",
+}: Props) => {
+  const { getParam } = useUrlQuery();
+  const query = getParam("query");
+
+  return (
+    <SearchField
+      key={query}
+      route={route}
+      imgSrc={imgSrc}
+      placeholder={placeholder}
+      otherClasses={otherClasses}
+      iconPosition={iconPosition}
+      initialQuery={query}
+    />
   );
 };
 

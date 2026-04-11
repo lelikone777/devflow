@@ -6,6 +6,14 @@ import { after } from "next/server";
 
 import { Answer, Question } from "@/database";
 import Vote from "@/database/vote.model";
+import type {
+  ActionResponse,
+  CreateVoteParams,
+  ErrorResponse,
+  HasVotedParams,
+  HasVotedResponse,
+  UpdateVoteCountParams,
+} from "@/types";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -15,6 +23,12 @@ import {
   UpdateVoteCountSchema,
 } from "../validations";
 import { createInteraction } from "./interaction.action";
+
+function assertActionSucceeded(result: ActionResponse, fallbackMessage: string) {
+  if (!result.success) {
+    throw new Error(result.error?.message || fallbackMessage);
+  }
+}
 
 async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -88,14 +102,17 @@ export async function createVote(
       if (existingVote.voteType === voteType) {
         // If user is voting again with the same vote type, remove the vote
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
-        await updateVoteCount(
-          {
-            targetId,
-            targetType,
-            voteType,
-            change: -1,
-          },
-          session
+        assertActionSucceeded(
+          await updateVoteCount(
+            {
+              targetId,
+              targetType,
+              voteType,
+              change: -1,
+            },
+            session
+          ),
+          "Failed to remove previous vote count"
         );
       } else {
         // If user is changing their vote, update voteType and adjust counts
@@ -104,23 +121,29 @@ export async function createVote(
           { voteType },
           { new: true, session }
         );
-        await updateVoteCount(
-          {
-            targetId,
-            targetType,
-            voteType: existingVote.voteType,
-            change: -1,
-          },
-          session
+        assertActionSucceeded(
+          await updateVoteCount(
+            {
+              targetId,
+              targetType,
+              voteType: existingVote.voteType,
+              change: -1,
+            },
+            session
+          ),
+          "Failed to remove previous vote count"
         );
-        await updateVoteCount(
-          {
-            targetId,
-            targetType,
-            voteType,
-            change: 1,
-          },
-          session
+        assertActionSucceeded(
+          await updateVoteCount(
+            {
+              targetId,
+              targetType,
+              voteType,
+              change: 1,
+            },
+            session
+          ),
+          "Failed to apply updated vote count"
         );
       }
     } else {
@@ -136,14 +159,17 @@ export async function createVote(
         ],
         { session }
       );
-      await updateVoteCount(
-        {
-          targetId,
-          targetType,
-          voteType,
-          change: 1,
-        },
-        session
+      assertActionSucceeded(
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType,
+            change: 1,
+          },
+          session
+        ),
+        "Failed to apply vote count"
       );
     }
 

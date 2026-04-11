@@ -14,6 +14,7 @@ import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
+import type { Question } from "@/types";
 
 import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";

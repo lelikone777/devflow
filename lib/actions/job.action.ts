@@ -1,3 +1,5 @@
+import type { Country, JobFilterParams } from "@/types";
+
 export const fetchLocation = async () => {
   try {
     const response = await fetch(

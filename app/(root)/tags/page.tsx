@@ -8,6 +8,7 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
 import { getTags } from "@/lib/actions/tag.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { RouteParams } from "@/types";
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();

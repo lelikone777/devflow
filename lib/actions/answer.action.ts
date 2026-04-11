@@ -7,7 +7,16 @@ import { after } from "next/server";
 import ROUTES from "@/constants/routes";
 import { Question, Vote } from "@/database";
 import Answer, { IAnswerDoc } from "@/database/answer.model";
+import type {
+  ActionResponse,
+  Answer as AnswerData,
+  CreateAnswerParams,
+  DeleteAnswerParams,
+  ErrorResponse,
+  GetAnswersParams,
+} from "@/types";
 
+import { getPagination, getPaginationMetadata, toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -72,7 +81,7 @@ export async function createAnswer(
 
     revalidatePath(ROUTES.QUESTION(questionId));
 
-    return { success: true, data: JSON.parse(JSON.stringify(newAnswer)) };
+    return { success: true, data: toPlainData(newAnswer) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -83,7 +92,7 @@ export async function createAnswer(
 
 export async function getAnswers(params: GetAnswersParams): Promise<
   ActionResponse<{
-    answers: Answer[];
+    answers: AnswerData[];
     isNext: boolean;
     totalAnswers: number;
     totalPages: number;
@@ -99,9 +108,7 @@ export async function getAnswers(params: GetAnswersParams): Promise<
   }
 
   const { questionId, page = 1, pageSize = 10, filter } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   let sortCriteria = {};
 
@@ -129,15 +136,20 @@ export async function getAnswers(params: GetAnswersParams): Promise<
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalAnswers > skip + answers.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalAnswers,
+      answers.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        answers: JSON.parse(JSON.stringify(answers)),
+        answers: toPlainData(answers),
         isNext,
         totalAnswers,
-        totalPages: Math.ceil(totalAnswers / limit),
+        totalPages,
       },
     };
   } catch (error) {

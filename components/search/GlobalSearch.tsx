@@ -1,33 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { useTranslations } from "@/context/Language";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+import { useUrlQuery } from "@/hooks/use-url-query";
 
 import GlobalResult from "../GlobalResult";
 
-const GlobalSearch = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+interface SearchFieldProps {
+  initialQuery: string;
+}
 
-  const query = searchParams.get("global");
-
-  const [search, setSearch] = useState(query || "");
-  const [isOpen, setIsOpen] = useState(query || false);
-  const searchContainerRef = useRef(null);
+const SearchField = ({ initialQuery }: SearchFieldProps) => {
+  const { getParam, pushQueryParam, removeQueryParams } = useUrlQuery();
+  const query = getParam("global");
+  const [search, setSearch] = useState(initialQuery);
+  const [isOpen, setIsOpen] = useState(Boolean(initialQuery));
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target;
+
       if (
         searchContainerRef.current &&
-        // @ts-expect-error Property 'contains' does not exist on type 'EventTarget | null'.
-        !searchContainerRef.current?.contains(event.target)
+        target instanceof Node &&
+        !searchContainerRef.current.contains(target)
       ) {
         setIsOpen(false);
         setSearch("");
@@ -43,28 +44,18 @@ const GlobalSearch = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (search) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "global",
-          value: search,
-        });
+      if (search.trim()) {
+        pushQueryParam("global", search.trim());
+        return;
+      }
 
-        router.push(newUrl, { scroll: false });
-      } else {
-        if (query) {
-          const newUrl = removeKeysFromUrlQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["global", "type"],
-          });
-
-          router.push(newUrl, { scroll: false });
-        }
+      if (query) {
+        removeQueryParams(["global", "type"]);
       }
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [search, pathname, router, searchParams, query]);
+  }, [pushQueryParam, query, removeQueryParams, search]);
 
   return (
     <div
@@ -95,6 +86,13 @@ const GlobalSearch = () => {
       {isOpen && <GlobalResult />}
     </div>
   );
+};
+
+const GlobalSearch = () => {
+  const { getParam } = useUrlQuery();
+  const query = getParam("global");
+
+  return <SearchField key={query} initialQuery={query} />;
 };
 
 export default GlobalSearch;

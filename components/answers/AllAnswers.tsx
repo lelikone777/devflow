@@ -1,6 +1,7 @@
 import { AnswerFilters } from "@/constants/filters";
 import { EMPTY_ANSWERS } from "@/constants/states";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { ActionResponse, Answer } from "@/types";
 
 import AnswerCard from "../cards/AnswerCard";
 import DataRenderer from "../DataRenderer";

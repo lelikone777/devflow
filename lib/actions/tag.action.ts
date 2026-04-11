@@ -1,7 +1,17 @@
 import { FilterQuery } from "mongoose";
 
 import { Question, Tag } from "@/database";
+import type {
+  ActionResponse,
+  ErrorResponse,
+  GetTagQuestionsParams,
+  PaginatedSearchParams,
+  Question as QuestionData,
+  Tag as TagData,
+} from "@/types";
 
+import dbConnect from "../mongoose";
+import { getPagination, getPaginationMetadata, toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -11,7 +21,9 @@ import {
 
 export const getTags = async (
   params: PaginatedSearchParams
-): Promise<ActionResponse<{ tags: Tag[]; isNext: boolean; totalPages: number }>> => {
+): Promise<
+  ActionResponse<{ tags: TagData[]; isNext: boolean; totalPages: number }>
+> => {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,
@@ -22,9 +34,7 @@ export const getTags = async (
   }
 
   const { page = 1, pageSize = 10, query, filter } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = Number(pageSize);
+  const { skip, limit } = getPagination({ page, pageSize });
 
   const filterQuery: FilterQuery<typeof Tag> = {};
 
@@ -60,14 +70,19 @@ export const getTags = async (
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalTags > skip + tags.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalTags,
+      tags.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        tags: JSON.parse(JSON.stringify(tags)),
+        tags: toPlainData(tags),
         isNext,
-        totalPages: Math.ceil(totalTags / limit),
+        totalPages,
       },
     };
   } catch (error) {
@@ -79,8 +94,8 @@ export const getTagQuestions = async (
   params: GetTagQuestionsParams
 ): Promise<
   ActionResponse<{
-    tag: Tag;
-    questions: Question[];
+    tag: TagData;
+    questions: QuestionData[];
     isNext: boolean;
     totalPages: number;
   }>
@@ -95,9 +110,7 @@ export const getTagQuestions = async (
   }
 
   const { tagId, page = 1, pageSize = 10, query } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = Number(pageSize);
+  const { skip, limit } = getPagination({ page, pageSize });
 
   try {
     const tag = await Tag.findById(tagId);
@@ -122,16 +135,36 @@ export const getTagQuestions = async (
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalQuestions > skip + questions.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalQuestions,
+      questions.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        tag: JSON.parse(JSON.stringify(tag)),
-        questions: JSON.parse(JSON.stringify(questions)),
+        tag: toPlainData(tag),
+        questions: toPlainData(questions),
         isNext,
-        totalPages: Math.ceil(totalQuestions / limit),
+        totalPages,
       },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getTopTags = async (): Promise<ActionResponse<TagData[]>> => {
+  try {
+    await dbConnect();
+
+    const tags = await Tag.find().sort({ questions: -1 }).limit(5);
+
+    return {
+      success: true,
+      data: toPlainData(tags),
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

@@ -1,54 +1,26 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
+import { HomePageFilters } from "@/constants/filters";
 import { useTranslations } from "@/context/Language";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+import { useUrlQuery } from "@/hooks/use-url-query";
 import { cn } from "@/lib/utils";
 
 import { Button } from "../ui/button";
 
-const filters = [
-  { name: "Newest", value: "newest" },
-  { name: "Popular", value: "popular" },
-  { name: "Unanswered", value: "unanswered" },
-  { name: "Recommeded", value: "recommended" },
-];
-
 const HomeFilter = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const filterParams = searchParams.get("filter");
-  const [active, setActive] = useState(filterParams || "");
+  const { getParam, toggleQueryParam } = useUrlQuery();
+  const active = getParam("filter");
   const t = useTranslations();
 
   const handleTypeClick = (filter: string) => {
-    let newUrl = "";
-
-    if (filter === active) {
-      setActive("");
-
-      newUrl = removeKeysFromUrlQuery({
-        params: searchParams.toString(),
-        keysToRemove: ["filter"],
-      });
-    } else {
-      setActive(filter);
-
-      newUrl = formUrlQuery({
-        params: searchParams.toString(),
-        key: "filter",
-        value: filter.toLowerCase(),
-      });
-    }
-
-    router.push(newUrl, { scroll: false });
+    toggleQueryParam("filter", filter.toLowerCase());
   };
 
   return (
     <div className="mt-10 hidden flex-wrap gap-3 sm:flex">
-      {filters.map((filter) => (
+      {HomePageFilters.map((filter) => (
         <Button
           key={filter.name}
           className={cn(

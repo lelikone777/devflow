@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
 import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
+import type { ActionResponse } from "@/types";
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>;

@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { use, useState } from "react";
 
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { createVote } from "@/lib/actions/vote.action";
 import { formatNumber } from "@/lib/utils";
+import type { ActionResponse, HasVotedResponse } from "@/types";
 
 interface Params {
   targetType: "question" | "answer";
@@ -24,6 +26,7 @@ const Votes = ({
   targetId,
   targetType,
 }: Params) => {
+  const t = useTranslations();
   const { success, data } = use(hasVotedPromise);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,8 +36,8 @@ const Votes = ({
   const handleVote = async (voteType: "upvote" | "downvote") => {
     if (!userId)
       return toast({
-        title: "Please login to vote",
-        description: "Only logged-in users can vote.",
+        title: t("votes.loginRequiredTitle"),
+        description: t("votes.loginRequiredDescription"),
       });
 
     setIsLoading(true);
@@ -48,7 +51,7 @@ const Votes = ({
 
       if (!result.success) {
         return toast({
-          title: "Failed to vote",
+          title: t("votes.failed"),
           description: result.error?.message,
           variant: "destructive",
         });
@@ -56,17 +59,21 @@ const Votes = ({
 
       const successMessage =
         voteType === "upvote"
-          ? `Upvote ${!hasUpvoted ? "added" : "removed"} successfully`
-          : `Downvote ${!hasDownvoted ? "added" : "removed"} successfully`;
+          ? !hasUpvoted
+            ? t("votes.upvoteAdded")
+            : t("votes.upvoteRemoved")
+          : !hasDownvoted
+            ? t("votes.downvoteAdded")
+            : t("votes.downvoteRemoved");
 
       toast({
         title: successMessage,
-        description: "Your vote has been recorded.",
+        description: t("votes.recorded"),
       });
     } catch {
       toast({
-        title: "Failed to vote",
-        description: "An error occurred while voting. Please try again later.",
+        title: t("votes.failed"),
+        description: t("votes.unexpectedError"),
         variant: "destructive",
       });
     } finally {

@@ -2,7 +2,14 @@ import mongoose from "mongoose";
 
 import { Interaction, User } from "@/database";
 import { IInteractionDoc } from "@/database/interaction.model";
+import type {
+  ActionResponse,
+  CreateInteractionParams,
+  ErrorResponse,
+  UpdateReputationParams,
+} from "@/types";
 
+import { toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { CreateInteractionSchema } from "../validations";
@@ -54,7 +61,7 @@ export async function createInteraction(
 
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(interaction)) };
+    return { success: true, data: toPlainData(interaction) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;

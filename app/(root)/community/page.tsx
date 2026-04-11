@@ -8,6 +8,7 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_USERS } from "@/constants/states";
 import { getUsers } from "@/lib/actions/user.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { RouteParams } from "@/types";
 
 const Community = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();

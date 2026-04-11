@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-
 import {
   Select,
   SelectItem,
@@ -11,7 +9,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { useTranslations } from "@/context/Language";
-import { formUrlQuery } from "@/lib/url";
+import { useUrlQuery } from "@/hooks/use-url-query";
 import { cn } from "@/lib/utils";
 
 interface Filter {
@@ -30,22 +28,14 @@ const CommonFilter = ({
   otherClasses = "",
   containerClasses = "",
 }: Props) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { getParam, pushQueryParam } = useUrlQuery();
   const t = useTranslations();
-
-  const paramsFilter = searchParams.get("filter");
+  const paramsFilter = getParam("filter");
   const getFilterLabel = (value: string, fallback: string) =>
     t(`filters.${value}`) === `filters.${value}` ? fallback : t(`filters.${value}`);
 
   const handleUpdateParams = (value: string) => {
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "filter",
-      value,
-    });
-
-    router.push(newUrl, { scroll: false });
+    pushQueryParam("filter", value);
   };
 
   return (

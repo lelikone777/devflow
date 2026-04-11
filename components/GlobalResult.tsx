@@ -6,8 +6,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import ROUTES from "@/constants/routes";
 import { useTranslations } from "@/context/Language";
 import { globalSearch } from "@/lib/actions/general.action";
+import type { GlobalSearchedItem } from "@/types";
 
 import GlobalFilter from "./filters/GlobalFilter";
 
@@ -45,18 +47,18 @@ const GlobalResult = () => {
     }
   }, [global, type]);
 
-  const renderLink = (resultType: string, id: string) => {
+  const renderLink = (resultType: GlobalSearchedItem["type"], id: string) => {
     switch (resultType) {
       case "question":
-        return `/questions/${id}`;
+        return ROUTES.QUESTION(id);
       case "answer":
-        return `/questions/${id}`;
+        return ROUTES.QUESTION(id);
       case "user":
-        return `/profile/${id}`;
+        return ROUTES.PROFILE(id);
       case "tag":
-        return `/tags/${id}`;
+        return ROUTES.TAG(id);
       default:
-        return "/";
+        return ROUTES.HOME;
     }
   };
 

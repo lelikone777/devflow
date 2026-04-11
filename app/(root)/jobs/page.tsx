@@ -3,6 +3,7 @@ import JobsFilter from "@/components/filters/JobFilter";
 import Pagination from "@/components/Pagination";
 import { fetchJobs } from "@/lib/actions/job.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { Job, RouteParams } from "@/types";
 
 const Page = async ({ searchParams }: RouteParams) => {
   const { t, locale } = await getServerTranslator();

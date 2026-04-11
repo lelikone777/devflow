@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { getServerTranslator } from "@/lib/i18n-server";
 import { formatNumber } from "@/lib/utils";
+import type { Badges } from "@/types";
 
 interface StatsCardProps {
   imgUrl: string;

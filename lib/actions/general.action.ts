@@ -1,15 +1,19 @@
 "use server";
 
 import { Answer, Question, Tag, User } from "@/database";
+import type {
+  ErrorResponse,
+  GlobalSearchParams,
+  GlobalSearchedItem,
+} from "@/types";
 
+import { toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { GlobalSearchSchema } from "../validations";
 
 export async function globalSearch(params: GlobalSearchParams) {
   try {
-    console.log("QUERY", params);
-
     const validationResult = await action({
       params,
       schema: GlobalSearchSchema,
@@ -22,14 +26,14 @@ export async function globalSearch(params: GlobalSearchParams) {
     const { query, type } = params;
     const regexQuery = { $regex: query, $options: "i" };
 
-    let results = [];
+    let results: GlobalSearchedItem[] = [];
 
     const modelsAndTypes = [
       { model: Question, searchField: "title", type: "question" },
       { model: User, searchField: "name", type: "user" },
       { model: Answer, searchField: "content", type: "answer" },
       { model: Tag, searchField: "name", type: "tag" },
-    ];
+    ] as const;
 
     const typeLower = type?.toLowerCase();
 
@@ -54,7 +58,7 @@ export async function globalSearch(params: GlobalSearchParams) {
       }
     } else {
       // Search in the specified model type
-      const modelInfo = modelsAndTypes.find((item) => item.type === type);
+      const modelInfo = modelsAndTypes.find((item) => item.type === typeLower);
 
       if (!modelInfo) {
         throw new Error("Invalid search type");
@@ -66,19 +70,17 @@ export async function globalSearch(params: GlobalSearchParams) {
 
       results = queryResults.map((item) => ({
         title:
-          type === "answer"
+          modelInfo.type === "answer"
             ? `Answers containing ${query}`
             : item[modelInfo.searchField],
-        type,
-        id: type === "answer" ? item.question : item._id,
+        type: modelInfo.type,
+        id: modelInfo.type === "answer" ? item.question : item._id,
       }));
     }
 
-    console.log(results);
-
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(results)),
+      data: toPlainData(results),
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

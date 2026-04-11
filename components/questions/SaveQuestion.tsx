@@ -3,8 +3,10 @@
 import Image from "next/image";
 import { use, useState } from "react";
 
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { toggleSaveQuestion } from "@/lib/actions/collection.action";
+import type { ActionResponse } from "@/types";
 
 const SaveQuestion = ({
   questionId,
@@ -15,6 +17,7 @@ const SaveQuestion = ({
   userId?: string;
   hasSavedQuestionPromise: Promise<ActionResponse<{ saved: boolean }>>;
 }) => {
+  const t = useTranslations();
   const { data } = use(hasSavedQuestionPromise);
 
   const { saved: hasSaved } = data || {};
@@ -25,7 +28,7 @@ const SaveQuestion = ({
     if (isLoading) return;
     if (!userId)
       return toast({
-        title: "You need to be logged in to save a question",
+        title: t("collection.loginRequired"),
         variant: "destructive",
       });
 
@@ -37,13 +40,15 @@ const SaveQuestion = ({
       if (!success) throw new Error(error?.message || "An error occurred");
 
       toast({
-        title: `Question ${data?.saved ? "saved" : "unsaved"} successfully`,
+        title: data?.saved
+          ? t("collection.saved")
+          : t("collection.unsaved"),
       });
     } catch (error) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description:
-          error instanceof Error ? error.message : "An error occurred",
+          error instanceof Error ? error.message : t("collection.failed"),
         variant: "destructive",
       });
     } finally {
@@ -58,7 +63,7 @@ const SaveQuestion = ({
       height={18}
       alt="save"
       className={`interactive-icon cursor-pointer ${isLoading && "opacity-50"}`}
-      aria-label="Save question"
+      aria-label={t("collection.saveAria")}
       onClick={handleSave}
     />
   );

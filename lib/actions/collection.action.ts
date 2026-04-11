@@ -5,7 +5,15 @@ import { revalidatePath } from "next/cache";
 
 import ROUTES from "@/constants/routes";
 import { Collection, Question } from "@/database";
+import type {
+  ActionResponse,
+  Collection as CollectionData,
+  CollectionBaseParams,
+  ErrorResponse,
+  PaginatedSearchParams,
+} from "@/types";
 
+import { getPagination, getPaginationMetadata, toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -105,7 +113,11 @@ export async function hasSavedQuestion(
 export async function getSavedQuestions(
   params: PaginatedSearchParams
 ): Promise<
-  ActionResponse<{ collection: Collection[]; isNext: boolean; totalPages: number }>
+  ActionResponse<{
+    collection: CollectionData[];
+    isNext: boolean;
+    totalPages: number;
+  }>
 > {
   const validationResult = await action({
     params,
@@ -120,8 +132,7 @@ export async function getSavedQuestions(
   const userId = validationResult.session?.user?.id;
   const { page = 1, pageSize = 10, query, filter } = params;
 
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   const sortOptions: Record<string, Record<string, 1 | -1>> = {
     mostrecent: { "question.createdAt": -1 },
@@ -188,14 +199,19 @@ export async function getSavedQuestions(
     const questions = await Collection.aggregate(pipeline);
 
     const total = totalCount?.count ?? 0;
-    const isNext = total > skip + questions.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      total,
+      questions.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        collection: JSON.parse(JSON.stringify(questions)),
+        collection: toPlainData(questions),
         isNext,
-        totalPages: Math.ceil(total / limit),
+        totalPages,
       },
     };
   } catch (error) {

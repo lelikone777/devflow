@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
-import AppProviders from "@/components/providers/AppProviders";
 import LeftSidebar from "@/components/navigation/LeftSidebar";
 import Navbar from "@/components/navigation/navbar";
 import RightSidebar from "@/components/navigation/RightSidebar";
+import AppProviders from "@/components/providers/AppProviders";
 import { getServerLocale } from "@/lib/i18n-server";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {

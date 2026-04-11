@@ -2,7 +2,9 @@ import Link from "next/link";
 import React from "react";
 
 import ROUTES from "@/constants/routes";
+import { getServerTranslator } from "@/lib/i18n-server";
 import { getTimeStamp } from "@/lib/utils";
+import type { Question, Tag } from "@/types";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";
@@ -13,10 +15,12 @@ interface Props {
   showActionBtns?: boolean;
 }
 
-const QuestionCard = ({
+const QuestionCard = async ({
   question: { _id, title, tags, author, createdAt, upvotes, answers, views },
   showActionBtns = false,
 }: Props) => {
+  const { t } = await getServerTranslator();
+
   return (
     <div className="card-wrapper interactive-card rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-center justify-between gap-5 sm:flex-row">
@@ -46,7 +50,7 @@ const QuestionCard = ({
           imgUrl={author.image}
           alt={author.name}
           value={author.name}
-          title={`• asked ${getTimeStamp(createdAt)}`}
+          title={`• ${t("questionCard.asked")} ${getTimeStamp(createdAt)}`}
           href={ROUTES.PROFILE(author._id)}
           textStyles="body-medium text-dark400_light700"
           isAuthor
@@ -58,21 +62,21 @@ const QuestionCard = ({
             imgUrl="/icons/like.svg"
             alt="like"
             value={upvotes}
-            title=" Votes"
+            title={` ${t("questionCard.votes")}`}
             textStyles="small-medium text-dark400_light800"
           />
           <Metric
             imgUrl="/icons/message.svg"
             alt="answers"
             value={answers}
-            title=" Answers"
+            title={` ${t("questionCard.answers")}`}
             textStyles="small-medium text-dark400_light800"
           />
           <Metric
             imgUrl="/icons/eye.svg"
             alt="views"
             value={views}
-            title=" Views"
+            title={` ${t("questionCard.views")}`}
             textStyles="small-medium text-dark400_light800"
           />
         </div>

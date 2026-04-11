@@ -12,6 +12,7 @@ import { HomePageFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { getQuestions } from "@/lib/actions/question.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { RouteParams } from "@/types";
 
 export const metadata: Metadata = {
   title: "Dev Overflow | Home",

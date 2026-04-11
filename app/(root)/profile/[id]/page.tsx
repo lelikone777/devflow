@@ -1,19 +1,10 @@
-import dayjs from "dayjs";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
-import AnswerCard from "@/components/cards/AnswerCard";
-import QuestionCard from "@/components/cards/QuestionCard";
-import TagCard from "@/components/cards/TagCard";
-import DataRenderer from "@/components/DataRenderer";
-import Pagination from "@/components/Pagination";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfileLink from "@/components/user/ProfileLink";
+import ProfileActivityTabs from "@/components/profile/ProfileActivityTabs";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import ProfileTopTags from "@/components/profile/ProfileTopTags";
 import Stats from "@/components/user/Stats";
-import UserAvatar from "@/components/UserAvatar";
-import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
 import {
   getUser,
   getUserAnswers,
@@ -22,6 +13,7 @@ import {
   getUserTopTags,
 } from "@/lib/actions/user.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import type { RouteParams } from "@/types";
 
 const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();
@@ -31,11 +23,9 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   if (!id) notFound();
 
   const loggedInUser = await auth();
-  const { success, data, error } = await getUser({
-    userId: id,
-  });
+  const { success, data, error } = await getUser({ userId: id });
 
-  if (!success)
+  if (!success) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <h1 className="h1-bold text-dark100_light900">
@@ -46,36 +36,41 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
         </p>
       </div>
     );
+  }
 
   const { user } = data!;
 
   const { data: userStats } = await getUserStats({ userId: id });
 
-  const {
-    success: userQuestionsSuccess,
-    data: userQuestions,
-    error: userQuestionsError,
-  } = await getUserQuestions({
-    userId: id,
-    page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
-  });
-
-  const {
-    success: userAnswersSuccess,
-    data: userAnswers,
-    error: userAnswersError,
-  } = await getUserAnswers({
-    userId: id,
-    page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
-  });
-
-  const {
-    success: userTopTagsSuccess,
-    data: userTopTags,
-    error: userTopTagsError,
-  } = await getUserTopTags({ userId: id });
+  const [
+    {
+      success: userQuestionsSuccess,
+      data: userQuestions,
+      error: userQuestionsError,
+    },
+    {
+      success: userAnswersSuccess,
+      data: userAnswers,
+      error: userAnswersError,
+    },
+    {
+      success: userTopTagsSuccess,
+      data: userTopTags,
+      error: userTopTagsError,
+    },
+  ] = await Promise.all([
+    getUserQuestions({
+      userId: id,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
+    }),
+    getUserAnswers({
+      userId: id,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
+    }),
+    getUserTopTags({ userId: id }),
+  ]);
 
   const {
     questions,
@@ -91,62 +86,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
 
   return (
     <>
-      <section className="flex flex-col-reverse items-start justify-between sm:flex-row">
-        <div className="flex flex-col items-start gap-4 lg:flex-row">
-          <UserAvatar
-            id={user._id}
-            name={user.name}
-            imageUrl={user.image}
-            className="size-[140px] rounded-full object-cover"
-            fallbackClassName="text-6xl font-bolder"
-          />
-
-          <div className="mt-3">
-            <h2 className="h2-bold text-dark100_light900">{user.name}</h2>
-            <p className="paragraph-regular text-dark200_light800">
-              @{user.username}
-            </p>
-
-            <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
-              {user.portfolio && (
-                <ProfileLink
-                  imgUrl="/icons/link.svg"
-                  href={user.portfolio}
-                  title={t("profile.portfolio")}
-                />
-              )}
-
-              {user.location && (
-                <ProfileLink
-                  imgUrl="/icons/location.svg"
-                  title={user.location}
-                />
-              )}
-
-              <ProfileLink
-                imgUrl="/icons/calendar.svg"
-                title={dayjs(user.createdAt).format("MMMM YYYY")}
-              />
-            </div>
-
-            {user?.bio && (
-              <p className="paragraph-regular text-dark400_light800 mt-8">
-                {user.bio}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
-          {loggedInUser?.user?.id === id && (
-            <Link href="/profile/edit">
-              <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-44 px-4 py-3">
-                {t("profile.editProfile")}
-              </Button>
-            </Link>
-          )}
-        </div>
-      </section>
+      <ProfileHeader user={user} isCurrentUser={loggedInUser?.user?.id === id} />
 
       <Stats
         totalQuestions={userStats?.totalQuestions || 0}
@@ -156,114 +96,30 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
       />
 
       <section className="mt-10 flex gap-10">
-        <Tabs defaultValue="top-posts" className="flex-[2]">
-          <TabsList className="light-border background-light900_dark300 min-h-[42px] rounded-md border p-1 shadow-light-300 dark:shadow-dark-200">
-            <TabsTrigger
-              value="top-posts"
-              className="tab background-light900_dark300"
-            >
-              {t("profile.topPosts")}
-            </TabsTrigger>
-            <TabsTrigger
-              value="answers"
-              className="tab background-light900_dark300"
-            >
-              {t("profile.answers")}
-            </TabsTrigger>
-          </TabsList>
+        <ProfileActivityTabs
+          page={page}
+          loggedInUserId={loggedInUser?.user?.id}
+          questionState={{
+            success: userQuestionsSuccess,
+            error: userQuestionsError,
+            questions,
+            hasMore: hasMoreQuestions || false,
+            totalPages: questionPages || 0,
+          }}
+          answerState={{
+            success: userAnswersSuccess,
+            error: userAnswersError,
+            answers,
+            hasMore: hasMoreAnswers || false,
+            totalPages: answerPages || 0,
+          }}
+        />
 
-          <TabsContent
-            value="top-posts"
-            className="mt-5 flex w-full flex-col gap-6"
-          >
-            <DataRenderer
-              success={userQuestionsSuccess}
-              error={userQuestionsError}
-              data={questions}
-              empty={EMPTY_QUESTION}
-              render={(questions) => (
-                <div className="flex w-full flex-col gap-6">
-                  {questions.map((question) => (
-                    <QuestionCard
-                      key={question._id}
-                      question={question}
-                      showActionBtns={
-                        loggedInUser?.user?.id === question.author._id
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            />
-
-            <Pagination
-              page={page}
-              isNext={hasMoreQuestions || false}
-              totalPages={questionPages || 0}
-            />
-          </TabsContent>
-
-          <TabsContent value="answers" className="flex w-full flex-col gap-6">
-            <DataRenderer
-              success={userAnswersSuccess}
-              error={userAnswersError}
-              data={answers}
-              empty={EMPTY_ANSWERS}
-              render={(answers) => (
-                <div className="flex w-full flex-col gap-10">
-                  {answers.map((answer) => (
-                    <AnswerCard
-                      key={answer._id}
-                      {...answer}
-                      userId={loggedInUser?.user?.id}
-                      content={answer.content.slice(0, 270)}
-                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
-                      showReadMore
-                      showActionBtns={
-                        loggedInUser?.user?.id === answer.author._id
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            />
-
-            <Pagination
-              page={page}
-              isNext={hasMoreAnswers || false}
-              totalPages={answerPages || 0}
-            />
-          </TabsContent>
-        </Tabs>
-
-        <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
-          <h3 className="h3-bold text-dark200_light900">
-            {t("profile.topTags")}
-          </h3>
-
-          <div className="mt-7 flex flex-col gap-4">
-            <DataRenderer
-              success={userTopTagsSuccess}
-              error={userTopTagsError}
-              data={tags}
-              empty={EMPTY_TAGS}
-              render={(tags) => (
-                <div className="mt-3 flex w-full flex-col gap-4">
-                  {tags.map((tag) => (
-                    <TagCard
-                      key={tag._id}
-                      _id={tag._id}
-                      name={tag.name}
-                      questions={tag.count}
-                      showCount
-                      compact
-                    />
-                  ))}
-                </div>
-              )}
-            />
-          </div>
-        </div>
+        <ProfileTopTags
+          success={userTopTagsSuccess}
+          error={userTopTagsError}
+          tags={tags}
+        />
       </section>
     </>
   );

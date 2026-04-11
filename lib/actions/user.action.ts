@@ -3,7 +3,22 @@
 import { FilterQuery, PipelineStage, Types } from "mongoose";
 
 import { Answer, Question, User } from "@/database";
+import type {
+  ActionResponse,
+  Answer as AnswerData,
+  Badges,
+  ErrorResponse,
+  GetUserAnswersParams,
+  GetUserParams,
+  GetUserQuestionsParams,
+  GetUserTagsParams,
+  PaginatedSearchParams,
+  Question as QuestionData,
+  UpdateUserParams,
+  User as UserData,
+} from "@/types";
 
+import { getPagination, getPaginationMetadata, toPlainData } from "./common";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { assignBadges } from "../utils";
@@ -18,7 +33,7 @@ import {
 
 export async function getUsers(params: PaginatedSearchParams): Promise<
   ActionResponse<{
-    users: User[];
+    users: UserData[];
     isNext: boolean;
     totalPages: number;
   }>
@@ -33,9 +48,7 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
   }
 
   const { page = 1, pageSize = 10, query, filter } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   const filterQuery: FilterQuery<typeof User> = {};
 
@@ -72,14 +85,19 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalUsers > skip + users.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalUsers,
+      users.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        users: JSON.parse(JSON.stringify(users)),
+        users: toPlainData(users),
         isNext,
-        totalPages: Math.ceil(totalUsers / limit),
+        totalPages,
       },
     };
   } catch (error) {
@@ -89,7 +107,7 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
 
 export async function getUser(params: GetUserParams): Promise<
   ActionResponse<{
-    user: User;
+    user: UserData;
   }>
 > {
   const validationResult = await action({
@@ -110,7 +128,7 @@ export async function getUser(params: GetUserParams): Promise<
     return {
       success: true,
       data: {
-        user: JSON.parse(JSON.stringify(user)),
+        user: toPlainData(user),
       },
     };
   } catch (error) {
@@ -120,7 +138,7 @@ export async function getUser(params: GetUserParams): Promise<
 
 export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
   ActionResponse<{
-    questions: Question[];
+    questions: QuestionData[];
     isNext: boolean;
     totalPages: number;
   }>
@@ -135,9 +153,7 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
   }
 
   const { page = 1, pageSize = 10, userId } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   try {
     const totalQuestions = await Question.countDocuments({ author: userId });
@@ -148,14 +164,19 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalQuestions > skip + questions.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalQuestions,
+      questions.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        questions: JSON.parse(JSON.stringify(questions)),
+        questions: toPlainData(questions),
         isNext,
-        totalPages: Math.ceil(totalQuestions / limit),
+        totalPages,
       },
     };
   } catch (error) {
@@ -165,7 +186,7 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
 
 export async function getUserAnswers(params: GetUserAnswersParams): Promise<
   ActionResponse<{
-    answers: Answer[];
+    answers: AnswerData[];
     isNext: boolean;
     totalPages: number;
   }>
@@ -180,9 +201,7 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<
   }
 
   const { page = 1, pageSize = 10, userId } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   try {
     const totalAnswers = await Answer.countDocuments({
@@ -194,14 +213,19 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalAnswers > skip + answers.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalAnswers,
+      answers.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        answers: JSON.parse(JSON.stringify(answers)),
+        answers: toPlainData(answers),
         isNext,
-        totalPages: Math.ceil(totalAnswers / limit),
+        totalPages,
       },
     };
   } catch (error) {
@@ -251,7 +275,7 @@ export async function getUserTopTags(
 
     return {
       success: true,
-      data: { tags: JSON.parse(JSON.stringify(tags)) },
+      data: { tags: toPlainData(tags) },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -327,7 +351,7 @@ export async function getUserStats(params: GetUserParams): Promise<
 
 export async function updateUser(
   params: UpdateUserParams
-): Promise<ActionResponse<{ user: User }>> {
+): Promise<ActionResponse<{ user: UserData }>> {
   const validationResult = await action({
     params,
     schema: UpdateUserSchema,
@@ -347,7 +371,7 @@ export async function updateUser(
 
     return {
       success: true,
-      data: { user: JSON.parse(JSON.stringify(updatedUser)) },
+      data: { user: toPlainData(updatedUser) },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

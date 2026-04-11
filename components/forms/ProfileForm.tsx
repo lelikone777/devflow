@@ -1,13 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,10 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { updateUser } from "@/lib/actions/user.action";
 import { ProfileSchema } from "@/lib/validations";
+import type { User } from "@/types";
 
+import SubmitButton from "./SubmitButton";
 import { Textarea } from "../ui/textarea";
 
 interface Params {
@@ -31,6 +32,7 @@ interface Params {
 const ProfileForm = ({ user }: Params) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations();
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -51,14 +53,14 @@ const ProfileForm = ({ user }: Params) => {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Your profile has been updated successfully.",
+          title: t("common.success"),
+          description: t("profileForm.updated"),
         });
 
         router.push(ROUTES.PROFILE(user._id));
       } else {
         toast({
-          title: `Error (${result.status})`,
+          title: t("common.error"),
           description: result.error?.message,
           variant: "destructive",
         });
@@ -78,12 +80,12 @@ const ProfileForm = ({ user }: Params) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Name <span className="text-primary-500">*</span>
+                {t("auth.name")} <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Your Name"
+                  placeholder={t("profileForm.namePlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -98,12 +100,12 @@ const ProfileForm = ({ user }: Params) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Username <span className="text-primary-500">*</span>
+                {t("auth.username")} <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Your username"
+                  placeholder={t("profileForm.usernamePlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -118,13 +120,13 @@ const ProfileForm = ({ user }: Params) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Portfolio Link
+                {t("profileForm.portfolioLabel")}
               </FormLabel>
               <FormControl>
                 <Input
                   type="url"
                   className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Your Portfolio link"
+                  placeholder={t("profileForm.portfolioPlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -139,12 +141,12 @@ const ProfileForm = ({ user }: Params) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Location <span className="text-primary-500">*</span>
+                {t("profileForm.locationLabel")} <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Where do you live?"
+                  placeholder={t("profileForm.locationPlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -159,13 +161,13 @@ const ProfileForm = ({ user }: Params) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Bio <span className="text-primary-500">*</span>
+                {t("profileForm.bioLabel")} <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <Textarea
                   rows={5}
                   className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                  placeholder="What's special about you?"
+                  placeholder={t("profileForm.bioPlaceholder")}
                   {...field}
                 />
               </FormControl>
@@ -175,20 +177,12 @@ const ProfileForm = ({ user }: Params) => {
         />
 
         <div className="mt-7 flex justify-end">
-          <Button
-            type="submit"
+          <SubmitButton
+            isPending={isPending}
+            idleLabel={t("profileForm.submit")}
+            pendingLabel={t("profileForm.submitting")}
             className="primary-gradient w-fit"
-            disabled={isPending}
-          >
-            {isPending ? (
-              <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>Submit</>
-            )}
-          </Button>
+          />
         </div>
       </form>
     </Form>

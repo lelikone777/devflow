@@ -3,7 +3,9 @@ import { Suspense } from "react";
 
 import ROUTES from "@/constants/routes";
 import { hasVoted } from "@/lib/actions/vote.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 import { cn, getTimeStamp } from "@/lib/utils";
+import type { Answer } from "@/types";
 
 import { Preview } from "../editor/Preview";
 import EditDeleteAction from "../user/EditDeleteAction";
@@ -17,7 +19,7 @@ interface Props extends Answer {
   userId?: string;
 }
 
-const AnswerCard = ({
+const AnswerCard = async ({
   _id,
   author,
   content,
@@ -30,6 +32,7 @@ const AnswerCard = ({
   showActionBtns = false,
   userId,
 }: Props) => {
+  const { t } = await getServerTranslator();
   const hasVotedPromise = hasVoted({
     targetId: _id,
     targetType: "answer",
@@ -61,12 +64,12 @@ const AnswerCard = ({
             className="interactive-inline flex flex-col max-sm:ml-1 sm:flex-row sm:items-center"
           >
             <p className="body-semibold text-dark300_light700">
-              {author.name ?? "Anonymous"}
+              {author.name ?? t("common.anonymous")}
             </p>
 
             <p className="small-regular text-light400_light500 ml-0.5 mt-0.5 line-clamp-1">
               <span className="max-sm:hidden"> • </span>
-              answered {getTimeStamp(createdAt)}
+              {t("answerCard.answered")} {getTimeStamp(createdAt)}
             </p>
           </Link>
         </div>
@@ -92,7 +95,7 @@ const AnswerCard = ({
           href={`/questions/${question}#answer-${_id}`}
           className="interactive-inline body-semibold relative z-10 font-space-grotesk text-primary-500"
         >
-          <p className="mt-1">Read more...</p>
+          <p className="mt-1">{t("answerCard.readMore")}</p>
         </Link>
       )}
     </article>

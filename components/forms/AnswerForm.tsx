@@ -9,7 +9,6 @@ import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,10 +16,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useTranslations } from "@/context/Language";
 import { toast } from "@/hooks/use-toast";
 import { createAnswer } from "@/lib/actions/answer.action";
-import { api } from "@/lib/api";
+import { generateAIAnswer as requestAIAnswer } from "@/lib/ai/client";
 import { AnswerSchema } from "@/lib/validations";
+
+import SubmitButton from "./SubmitButton";
+import { Button } from "../ui/button";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -41,7 +44,7 @@ const AnswerForm = ({
 }: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
-
+  const t = useTranslations();
   const editorRef = useRef<MDXEditorMethods>(null);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -62,8 +65,8 @@ const AnswerForm = ({
         form.reset();
 
         toast({
-          title: "Success",
-          description: "Your answer has been posted successfully",
+          title: t("common.success"),
+          description: t("answerForm.posted"),
         });
 
         if (editorRef.current) {
@@ -71,7 +74,7 @@ const AnswerForm = ({
         }
       } else {
         toast({
-          title: "Error",
+          title: t("common.error"),
           description: result.error?.message,
           variant: "destructive",
         });
@@ -79,12 +82,13 @@ const AnswerForm = ({
     });
   };
 
-  const generateAIAnswer = async () => {
+  const handleGenerateAIAnswer = async (): Promise<void> => {
     if (!userId) {
-      return toast({
-        title: "Please log in",
-        description: "You need to be logged in to use this feature",
+      toast({
+        title: t("answerForm.loginRequired"),
+        description: t("answerForm.loginRequiredDescription"),
       });
+      return;
     }
 
     setIsAISubmitting(true);
@@ -92,18 +96,28 @@ const AnswerForm = ({
     const userAnswer = editorRef.current?.getMarkdown();
 
     try {
-      const { success, data, error } = await api.ai.getAnswer(
-        questionTitle,
-        questionContent,
-        userAnswer
-      );
+      const { success, data, error } = await requestAIAnswer({
+        question: questionTitle,
+        content: questionContent,
+        userAnswer,
+      });
 
       if (!success) {
-        return toast({
-          title: "Error",
+        toast({
+          title: t("common.error"),
           description: error?.message,
           variant: "destructive",
         });
+        return;
+      }
+
+      if (!data) {
+        toast({
+          title: t("common.error"),
+          description: t("answerForm.emptyAIResponse"),
+          variant: "destructive",
+        });
+        return;
       }
 
       const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
@@ -116,16 +130,16 @@ const AnswerForm = ({
       }
 
       toast({
-        title: "Success",
-        description: "AI generated answer has been generated",
+        title: t("common.success"),
+        description: t("answerForm.aiGenerated"),
       });
     } catch (error) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description:
           error instanceof Error
             ? error.message
-            : "There was a problem with your request",
+            : t("answerForm.requestFailed"),
         variant: "destructive",
       });
     } finally {
@@ -137,28 +151,29 @@ const AnswerForm = ({
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <h4 className="paragraph-semibold text-dark400_light800">
-          Write your answer here
+          {t("answerForm.title")}
         </h4>
         <Button
+          type="button"
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           disabled={isAISubmitting}
-          onClick={generateAIAnswer}
+          onClick={handleGenerateAIAnswer}
         >
           {isAISubmitting ? (
             <>
               <ReloadIcon className="mr-2 size-4 animate-spin" />
-              Generating...
+              {t("answerForm.aiGenerating")}
             </>
           ) : (
             <>
               <Image
                 src="/icons/stars.svg"
-                alt="Generate AI Answer"
+                alt={t("answerForm.aiGenerate")}
                 width={12}
                 height={12}
                 className="object-contain"
               />
-              Generate AI Answer
+              {t("answerForm.aiGenerate")}
             </>
           )}
         </Button>
@@ -186,16 +201,12 @@ const AnswerForm = ({
           />
 
           <div className="flex justify-end">
-            <Button type="submit" className="primary-gradient w-fit">
-              {isAnswering ? (
-                <>
-                  <ReloadIcon className="mr-2 size-4 animate-spin" />
-                  Posting...
-                </>
-              ) : (
-                "Post Answer"
-              )}
-            </Button>
+            <SubmitButton
+              isPending={isAnswering}
+              idleLabel={t("answerForm.post")}
+              pendingLabel={t("answerForm.posting")}
+              className="primary-gradient w-fit"
+            />
           </div>
         </form>
       </Form>

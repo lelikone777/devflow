@@ -20,13 +20,26 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "@/lib/validations";
+import type {
+  ActionResponse,
+  CreateQuestionParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
+  ErrorResponse,
+  GetQuestionParams,
+  IncrementViewsParams,
+  PaginatedSearchParams,
+  Question as QuestionData,
+  RecommendationParams,
+} from "@/types";
 
 import dbConnect from "../mongoose";
+import { getPagination, getPaginationMetadata, toPlainData } from "./common";
 import { createInteraction } from "./interaction.action";
 
 export async function createQuestion(
   params: CreateQuestionParams
-): Promise<ActionResponse<Question>> {
+): Promise<ActionResponse<QuestionData>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
@@ -88,7 +101,7 @@ export async function createQuestion(
 
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return { success: true, data: toPlainData(question) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -192,7 +205,7 @@ export async function editQuestion(
     await question.save({ session });
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return { success: true, data: toPlainData(question) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -203,7 +216,7 @@ export async function editQuestion(
 
 export const getQuestion = cache(async function getQuestion(
   params: GetQuestionParams
-): Promise<ActionResponse<Question>> {
+): Promise<ActionResponse<QuestionData>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
@@ -222,7 +235,7 @@ export const getQuestion = cache(async function getQuestion(
 
     if (!question) throw new Error("Question not found");
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return { success: true, data: toPlainData(question) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
@@ -279,7 +292,7 @@ export async function getRecommendedQuestions({
     .lean();
 
   return {
-    questions: JSON.parse(JSON.stringify(questions)),
+    questions: toPlainData(questions) as unknown as QuestionData[],
     isNext: total > skip + questions.length,
     totalPages: Math.ceil(total / limit),
   };
@@ -287,7 +300,7 @@ export async function getRecommendedQuestions({
 
 export async function getQuestions(params: PaginatedSearchParams): Promise<
   ActionResponse<{
-    questions: Question[];
+    questions: QuestionData[];
     isNext: boolean;
     totalPages: number;
   }>
@@ -302,9 +315,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
   }
 
   const { page = 1, pageSize = 10, query, filter } = params;
-
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
+  const { skip, limit } = getPagination({ page, pageSize });
 
   const filterQuery: FilterQuery<typeof Question> = {};
   let sortCriteria = {};
@@ -318,7 +329,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
       if (!userId) {
         return {
           success: true,
-          data: { questions: [], isNext: false, totalPages: 0 },
+        data: { questions: [], isNext: false, totalPages: 0 },
         };
       }
 
@@ -367,14 +378,19 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalQuestions > skip + questions.length;
+    const { isNext, totalPages } = getPaginationMetadata(
+      totalQuestions,
+      questions.length,
+      skip,
+      limit
+    );
 
     return {
       success: true,
       data: {
-        questions: JSON.parse(JSON.stringify(questions)),
+        questions: toPlainData(questions) as unknown as QuestionData[],
         isNext,
-        totalPages: Math.ceil(totalQuestions / limit),
+        totalPages,
       },
     };
   } catch (error) {
@@ -413,7 +429,7 @@ export async function incrementViews(
   }
 }
 
-export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
+export async function getHotQuestions(): Promise<ActionResponse<QuestionData[]>> {
   try {
     await dbConnect();
 
@@ -423,7 +439,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
 
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(questions)),
+      data: toPlainData(questions),
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
