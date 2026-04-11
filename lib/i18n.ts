@@ -1,7 +1,7 @@
 export const locales = ["en", "ru"] as const;
 export type Locale = (typeof locales)[number];
 
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "ru";
 export const LOCALE_COOKIE_NAME = "locale";
 
 type Messages = Record<string, string>;

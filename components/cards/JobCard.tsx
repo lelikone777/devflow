@@ -15,18 +15,18 @@ const JobLocation = ({
   job_state,
 }: JobLocationProps) => {
   return (
-    <div className="background-light800_dark400 flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5">
+    <div className="flex items-center justify-end gap-2 rounded-2xl bg-primary-500 px-3 py-1.5 shadow-sm">
       {job_country && (
         <Image
           src={`https://flagsapi.com/${job_country}/flat/64.png`}
           alt="country symbol"
           width={16}
           height={16}
-          className="rounded-full"
+          className="rounded-full border border-light-900/40"
         />
       )}
 
-      <p className="body-medium text-dark400_light700">
+      <p className="body-semibold text-light-900">
         {job_city && `${job_city}, `}
         {job_state && `${job_state}, `}
         {job_country && `${job_country}`}
