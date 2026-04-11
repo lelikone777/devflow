@@ -342,9 +342,110 @@
   @apply min-h-full! dark:bg-dark-400! bg-light-800! text-light-500! dark:data-[state=active]:bg-dark-300! data-[state=active]:bg-primary-100! data-[state=active]:text-primary-500!;
 }
 
+@layer components {
+  .interactive-panel,
+  .interactive-compact,
+  .interactive-card,
+  .interactive-inline,
+  .interactive-icon {
+    will-change: transform;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease,
+      color 0.3s ease,
+      opacity 0.3s ease,
+      filter 0.3s ease;
+  }
+
+  .interactive-panel,
+  .interactive-compact,
+  .interactive-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .interactive-panel::before,
+  .interactive-compact::before,
+  .interactive-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-135%);
+    transition:
+      transform 0.55s ease,
+      opacity 0.3s ease;
+    background: linear-gradient(
+      118deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.18) 42%,
+      transparent 72%
+    );
+  }
+
+  .interactive-panel:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 18px 36px -20px rgba(255, 112, 0, 0.5);
+    filter: saturate(1.05);
+  }
+
+  .interactive-compact:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px -22px rgba(255, 112, 0, 0.5);
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px -24px rgba(255, 112, 0, 0.42);
+    border-color: rgba(255, 112, 0, 0.24);
+  }
+
+  .interactive-panel:hover::before,
+  .interactive-compact:hover::before,
+  .interactive-card:hover::before {
+    opacity: 1;
+    transform: translateX(135%);
+  }
+
+  .interactive-inline:hover {
+    transform: translateY(-1px);
+    filter: drop-shadow(0 8px 18px rgba(255, 112, 0, 0.28));
+  }
+
+  .interactive-icon:hover {
+    transform: translateY(-2px) scale(1.12) rotate(-4deg);
+    filter: drop-shadow(0 10px 18px rgba(255, 112, 0, 0.42));
+  }
+
+  .interactive-panel:active,
+  .interactive-compact:active,
+  .interactive-card:active,
+  .interactive-inline:active,
+  .interactive-icon:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-panel,
+  .interactive-compact,
+  .interactive-card,
+  .interactive-inline,
+  .interactive-icon,
+  .interactive-panel::before,
+  .interactive-compact::before,
+  .interactive-card::before {
+    transition: none !important;
+    transform: none !important;
   }
 }
 

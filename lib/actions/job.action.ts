@@ -38,7 +38,6 @@ export const fetchJobs = async (filters: JobFilterParams) => {
   const {
     query,
     page,
-    country,
     location,
     datePosted = "all",
     workFromHome,
@@ -72,7 +71,7 @@ export const fetchJobs = async (filters: JobFilterParams) => {
     query,
     page: String(page),
     num_pages: "1",
-    country: country || "us",
+    country: "us",
     date_posted: datePosted,
     fields,
   });

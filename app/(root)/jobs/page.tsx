@@ -1,11 +1,7 @@
 import JobCard from "@/components/cards/JobCard";
 import JobsFilter from "@/components/filters/JobFilter";
 import Pagination from "@/components/Pagination";
-import {
-  fetchCountries,
-  fetchJobs,
-  fetchLocation,
-} from "@/lib/actions/job.action";
+import { fetchJobs } from "@/lib/actions/job.action";
 import { getServerTranslator } from "@/lib/i18n-server";
 
 const Page = async ({ searchParams }: RouteParams) => {
@@ -13,7 +9,6 @@ const Page = async ({ searchParams }: RouteParams) => {
   const {
     query,
     location,
-    country,
     datePosted,
     remote,
     employmentType,
@@ -21,10 +16,8 @@ const Page = async ({ searchParams }: RouteParams) => {
     radius,
     page,
   } = await searchParams;
-  const userLocation = await fetchLocation();
   const searchQuery = query?.trim();
   const searchLocation = location?.trim();
-  const searchCountry = country?.trim() || userLocation.countryCode || "us";
   const jobsQuery = searchQuery
     ? searchLocation
       ? `${searchQuery} jobs in ${searchLocation}`
@@ -36,7 +29,7 @@ const Page = async ({ searchParams }: RouteParams) => {
   const jobs = await fetchJobs({
     query: jobsQuery,
     page: page ?? 1,
-    country: searchCountry.toLowerCase(),
+    country: "us",
     location: searchLocation,
     datePosted:
       datePosted === "today" ||
@@ -64,7 +57,6 @@ const Page = async ({ searchParams }: RouteParams) => {
     language: locale,
   });
 
-  const countries = await fetchCountries();
   const parsedPage = parseInt(page ?? 1);
 
   return (
@@ -72,7 +64,7 @@ const Page = async ({ searchParams }: RouteParams) => {
       <h1 className="h1-bold text-dark100_light900">{t("jobs.title")}</h1>
 
       <div className="flex">
-        <JobsFilter countriesList={countries} />
+        <JobsFilter />
       </div>
 
       <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">

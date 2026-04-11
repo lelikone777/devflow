@@ -30,7 +30,7 @@ const UserAvatar = ({
     .slice(0, 2);
 
   return (
-    <Link href={ROUTES.PROFILE(id)}>
+    <Link href={ROUTES.PROFILE(id)} className="interactive-icon rounded-full">
       <Avatar className={cn("relative", className)}>
         {imageUrl ? (
           <Image

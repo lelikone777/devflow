@@ -15,7 +15,7 @@ const JobLocation = ({
   job_state,
 }: JobLocationProps) => {
   return (
-    <div className="flex items-center justify-end gap-2 rounded-2xl bg-primary-500 px-3 py-1.5 shadow-sm">
+    <div className="primary-gradient flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5 shadow-sm">
       {job_country && (
         <Image
           src={`https://flagsapi.com/${job_country}/flat/64.png`}
@@ -62,7 +62,7 @@ const JobCard = ({ job }: { job: Job }) => {
         {employer_logo ? (
           <Link
             href={employer_website ?? "/jobs"}
-            className="background-light800_dark400 relative size-16 rounded-xl"
+            className="background-light800_dark400 interactive-panel relative size-16 rounded-xl"
           >
             <Image
               src={employer_logo}
@@ -131,7 +131,7 @@ const JobCard = ({ job }: { job: Job }) => {
           <Link
             href={job_apply_link ?? "/jobs"}
             target="_blank"
-            className="flex items-center gap-2"
+            className="interactive-inline flex items-center gap-2"
           >
             <p className="body-semibold primary-text-gradient">View job</p>
 

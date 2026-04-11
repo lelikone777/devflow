@@ -18,15 +18,15 @@ const QuestionCard = ({
   showActionBtns = false,
 }: Props) => {
   return (
-    <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
+    <div className="card-wrapper interactive-card rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-center justify-between gap-5 sm:flex-row">
         <div className="flex-1">
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
             {getTimeStamp(createdAt)}
           </span>
 
-          <Link href={ROUTES.QUESTION(_id)}>
-            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
+          <Link href={ROUTES.QUESTION(_id)} className="interactive-inline w-fit">
+            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1 transition-colors duration-300 hover:text-primary-500">
               {title}
             </h3>
           </Link>

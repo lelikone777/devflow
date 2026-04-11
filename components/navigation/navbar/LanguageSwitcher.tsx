@@ -24,7 +24,11 @@ const LanguageSwitcher = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative !overflow-visible"
+        >
           <Languages className="size-[1.1rem]" />
           <span className="absolute -bottom-1 right-0 text-[10px] font-semibold uppercase">
             {localeLabels[locale]}

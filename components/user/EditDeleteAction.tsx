@@ -60,13 +60,13 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
           alt="edit"
           width={14}
           height={14}
-          className="cursor-pointer object-contain"
+          className="interactive-icon cursor-pointer object-contain"
           onClick={handleEdit}
         />
       )}
 
       <AlertDialog>
-        <AlertDialogTrigger className="cursor-pointer">
+        <AlertDialogTrigger className="interactive-icon cursor-pointer">
           <Image src="/icons/trash.svg" alt="trash" width={14} height={14} />
         </AlertDialogTrigger>
         <AlertDialogContent className="background-light800_dark300">

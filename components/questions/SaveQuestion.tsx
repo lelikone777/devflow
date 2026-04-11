@@ -57,7 +57,7 @@ const SaveQuestion = ({
       width={18}
       height={18}
       alt="save"
-      className={`cursor-pointer ${isLoading && "opacity-50"}`}
+      className={`interactive-icon cursor-pointer ${isLoading && "opacity-50"}`}
       aria-label="Save question"
       onClick={handleSave}
     />

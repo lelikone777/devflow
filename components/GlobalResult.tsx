@@ -84,7 +84,7 @@ const GlobalResult = () => {
                 <Link
                   href={renderLink(item.type, item.id)}
                   key={item.type + item.id + index}
-                  className="flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
+                  className="interactive-compact flex w-full cursor-pointer items-start gap-3 rounded-lg px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
                 >
                   <Image
                     src="/icons/tag.svg"

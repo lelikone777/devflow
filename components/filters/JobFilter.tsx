@@ -18,10 +18,6 @@ import { Input } from "@/components/ui/input";
 
 import LocalSearch from "../search/LocalSearch";
 
-interface JobsFilterProps {
-  countriesList: Country[];
-}
-
 const DATE_OPTIONS = [
   { value: "all", labelKey: "jobs.dateAll", fallback: "All time" },
   { value: "today", labelKey: "jobs.dateToday", fallback: "Today" },
@@ -83,7 +79,7 @@ const RADIUS_OPTIONS = [
   { value: "100", labelKey: "", fallback: "100 km" },
 ] as const;
 
-const JobsFilter = ({ countriesList }: JobsFilterProps) => {
+const JobsFilter = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -155,11 +151,8 @@ const JobsFilter = ({ countriesList }: JobsFilterProps) => {
           />
         </div>
 
-        <Select
-          value={searchParams.get("country") || undefined}
-          onValueChange={(value) => handleUpdateParams("country", value)}
-        >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 line-clamp-1 flex min-h-[56px] items-center gap-3 border p-4 sm:max-w-[210px]">
+        <Select value="us" disabled>
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] cursor-not-allowed border px-4 opacity-70 sm:max-w-[210px]">
             <Image
               src="/icons/carbon-location.svg"
               alt="country"
@@ -173,19 +166,7 @@ const JobsFilter = ({ countriesList }: JobsFilterProps) => {
 
           <SelectContent className="body-semibold max-h-[350px] max-w-[250px]">
             <SelectGroup>
-              {countriesList.length > 0 ? (
-                countriesList.map((country: Country) => (
-                  <SelectItem
-                    key={country.cca2}
-                    value={country.cca2.toLowerCase()}
-                    className="px-4 py-3"
-                  >
-                    {country.name.common}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="no-results">{t("jobs.noResults")}</SelectItem>
-              )}
+              <SelectItem value="us">United States</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

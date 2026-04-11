@@ -29,7 +29,7 @@ const MobileNavigation = async () => {
           width={36}
           height={36}
           alt="Menu"
-          className="invert-colors sm:hidden"
+          className="interactive-icon invert-colors sm:hidden"
         />
       </SheetTrigger>
       <SheetContent
@@ -37,7 +37,7 @@ const MobileNavigation = async () => {
         className="background-light900_dark200 border-none"
       >
         <SheetTitle className="hidden">Navigation</SheetTitle>
-        <Link href="/" className="flex items-center gap-1">
+        <Link href="/" className="interactive-inline flex items-center gap-1">
           <Image
             src="/images/site-logo.svg"
             width={23}

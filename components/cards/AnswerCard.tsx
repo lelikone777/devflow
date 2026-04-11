@@ -56,7 +56,7 @@ const AnswerCard = ({
 
           <Link
             href={ROUTES.PROFILE(author._id)}
-            className="flex flex-col max-sm:ml-1 sm:flex-row sm:items-center"
+            className="interactive-inline flex flex-col max-sm:ml-1 sm:flex-row sm:items-center"
           >
             <p className="body-semibold text-dark300_light700">
               {author.name ?? "Anonymous"}
@@ -87,7 +87,7 @@ const AnswerCard = ({
       {showReadMore && (
         <Link
           href={`/questions/${question}#answer-${_id}`}
-          className="body-semibold relative z-10 font-space-grotesk text-primary-500"
+          className="interactive-inline body-semibold relative z-10 font-space-grotesk text-primary-500"
         >
           <p className="mt-1">Read more...</p>
         </Link>

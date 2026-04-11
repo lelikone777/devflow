@@ -84,7 +84,7 @@ const Votes = ({
           width={18}
           height={18}
           alt="upvote"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`interactive-icon cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Upvote"
           onClick={() => !isLoading && handleVote("upvote")}
         />
@@ -106,7 +106,7 @@ const Votes = ({
           width={18}
           height={18}
           alt="downvote"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`interactive-icon cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Downvote"
           onClick={() => !isLoading && handleVote("downvote")}
         />
