@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
 import Pagination from "@/components/Pagination";
@@ -5,7 +7,34 @@ import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getTagQuestions } from "@/lib/actions/tag.action";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
+
+export async function generateMetadata({
+  params,
+}: RouteParams): Promise<Metadata> {
+  const { id } = await params;
+  const { success, data } = await getTagQuestions({
+    tagId: id,
+    page: 1,
+    pageSize: 1,
+  });
+
+  if (!success || !data?.tag) {
+    return createPageMetadata({
+      title: "Тег",
+      description: "Просматривайте вопросы разработчиков, объединённые по тегам на DevFlow.",
+      path: `/tags/${id}`,
+    });
+  }
+
+  return createPageMetadata({
+    title: `Тег: ${data.tag.name}`,
+    description: `Просматривайте вопросы разработчиков с тегом ${data.tag.name} на DevFlow.`,
+    path: `/tags/${id}`,
+    keywords: [data.tag.name, `${data.tag.name} вопросы`, `${data.tag.name} обсуждения`],
+  });
+}
 
 const Page = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;

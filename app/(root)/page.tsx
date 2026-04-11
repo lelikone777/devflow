@@ -12,13 +12,16 @@ import { HomePageFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { getQuestions } from "@/lib/actions/question.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Dev Overflow | Home",
+export const metadata: Metadata = createPageMetadata({
+  title: "Вопросы",
   description:
-    "Discover different programming questions and answers with recommendations from the community.",
-};
+    "Просматривайте вопросы по программированию, находите ответы от сообщества и изучайте популярные обсуждения разработчиков на DevFlow.",
+  path: "/",
+  keywords: ["вопросы по программированию", "ответы разработчиков", "технические обсуждения"],
+});
 
 async function Home({ searchParams }: RouteParams) {
   const { t } = await getServerTranslator();

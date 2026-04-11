@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
@@ -13,7 +14,33 @@ import {
   getUserTopTags,
 } from "@/lib/actions/user.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
+
+export async function generateMetadata({
+  params,
+}: RouteParams): Promise<Metadata> {
+  const { id } = await params;
+  const { success, data } = await getUser({ userId: id });
+
+  if (!success || !data?.user) {
+    return createPageMetadata({
+      title: "Профиль",
+      description: "Просматривайте профили разработчиков и активность сообщества на DevFlow.",
+      path: `/profile/${id}`,
+      noIndex: true,
+    });
+  }
+
+  return createPageMetadata({
+    title: data.user.name,
+    description:
+      data.user.bio ||
+      `Профиль разработчика ${data.user.name} на DevFlow с вопросами, ответами, тегами и активностью в сообществе.`,
+    path: `/profile/${id}`,
+    keywords: [data.user.name, data.user.username, "профиль разработчика"],
+  });
+}
 
 const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import TagCard from "@/components/cards/TagCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
@@ -8,7 +10,16 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
 import { getTags } from "@/lib/actions/tag.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Теги",
+  description:
+    "Изучайте теги по программированию, находите нужные темы и переходите к обсуждениям по технологиям, фреймворкам и языкам.",
+  path: "/tags",
+  keywords: ["теги по программированию", "технологии", "категории разработчиков"],
+});
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();

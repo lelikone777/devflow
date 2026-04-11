@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 
 import "./globals.css";
 import { getServerLocale } from "@/lib/i18n-server";
+import { getSiteUrl, siteConfig } from "@/lib/seo";
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -18,9 +19,46 @@ const spaceGrotesk = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DevFlow",
-  description:
-    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: siteConfig.name,
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  creator: siteConfig.creator,
+  publisher: siteConfig.name,
+  authors: [{ name: siteConfig.creator }],
+  category: "technology",
+  referrer: "origin-when-cross-origin",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: getSiteUrl(),
+    siteName: siteConfig.name,
+    locale: "ru_RU",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import React from "react";
 
@@ -5,7 +6,15 @@ import { auth } from "@/auth";
 import QuestionForm from "@/components/forms/QuestionForm";
 import ROUTES from "@/constants/routes";
 import { getQuestion } from "@/lib/actions/question.action";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Редактирование вопроса",
+  description:
+    "Отредактируйте существующий вопрос на DevFlow и обновите содержание, детали или теги.",
+  noIndex: true,
+});
 
 const EditQuestion = async ({ params }: RouteParams) => {
   const { id } = await params;

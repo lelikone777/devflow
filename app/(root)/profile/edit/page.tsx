@@ -1,10 +1,20 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import ProfileForm from "@/components/forms/ProfileForm";
 import ROUTES from "@/constants/routes";
 import { getUser } from "@/lib/actions/user.action";
+import { createPageMetadata } from "@/lib/seo";
 import type { User } from "@/types";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Редактирование профиля",
+  description:
+    "Обновите данные профиля DevFlow, портфолио, локацию и информацию о себе.",
+  path: "/profile/edit",
+  noIndex: true,
+});
 
 const Page = async () => {
   const session = await auth();

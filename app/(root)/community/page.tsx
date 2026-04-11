@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import UserCard from "@/components/cards/UserCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
@@ -8,7 +10,16 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_USERS } from "@/constants/states";
 import { getUsers } from "@/lib/actions/user.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Сообщество",
+  description:
+    "Изучайте сообщество DevFlow, находите профили разработчиков и открывайте активных участников по репутации и свежести активности.",
+  path: "/community",
+  keywords: ["сообщество разработчиков", "профили разработчиков", "сеть программистов"],
+});
 
 const Community = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();

@@ -1,9 +1,20 @@
+import type { Metadata } from "next";
+
 import JobCard from "@/components/cards/JobCard";
 import JobsFilter from "@/components/filters/JobFilter";
 import Pagination from "@/components/Pagination";
 import { fetchJobs } from "@/lib/actions/job.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
 import type { Job, RouteParams } from "@/types";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Вакансии для разработчиков",
+  description:
+    "Ищите вакансии для разработчиков с фильтрами по локации, формату работы, типу занятости и уровню требований на DevFlow.",
+  path: "/jobs",
+  keywords: ["вакансии разработчиков", "frontend вакансии", "работа для программистов", "удалённая работа"],
+});
 
 const Page = async ({ searchParams }: RouteParams) => {
   const { t, locale } = await getServerTranslator();

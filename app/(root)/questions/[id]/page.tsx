@@ -13,6 +13,7 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
+import { createPageMetadata } from "@/lib/seo";
 import type { RouteParams } from "@/types";
 
 export async function generateMetadata({
@@ -23,21 +24,20 @@ export async function generateMetadata({
   const { success, data: question } = await getQuestion({ questionId: id });
 
   if (!success || !question) {
-    return {
-      title: "Question not found",
-      description: "This question does not exist.",
-    };
+    return createPageMetadata({
+      title: "Вопрос не найден",
+      description: "Запрошенный вопрос не найден на DevFlow.",
+      path: `/questions/${id}`,
+      noIndex: true,
+    });
   }
 
-  return {
+  return createPageMetadata({
     title: question.title,
-    description: question.content.slice(0, 100),
-    twitter: {
-      card: "summary_large_image",
-      title: question.title,
-      description: question.content.slice(0, 100),
-    },
-  };
+    description: question.content.slice(0, 160),
+    path: `/questions/${id}`,
+    keywords: [question.title, "вопрос по программированию", "ответы разработчиков"],
+  });
 }
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {

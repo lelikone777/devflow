@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
@@ -8,6 +10,15 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 import { getServerTranslator } from "@/lib/i18n-server";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Сохранённые вопросы",
+  description:
+    "Просматривайте сохранённые вопросы и быстро возвращайтесь к полезным обсуждениям, которые вы собрали на DevFlow.",
+  path: "/collection",
+  noIndex: true,
+});
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
