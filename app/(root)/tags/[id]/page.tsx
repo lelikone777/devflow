@@ -17,7 +17,7 @@ const Page = async ({ params, searchParams }: RouteParams) => {
     query,
   });
 
-  const { tag, questions, isNext } = data || {};
+  const { tag, questions, isNext, totalPages } = data || {};
 
   return (
     <>
@@ -48,7 +48,11 @@ const Page = async ({ params, searchParams }: RouteParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination
+        page={page}
+        isNext={isNext || false}
+        totalPages={totalPages || 0}
+      />
     </>
   );
 };

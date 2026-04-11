@@ -11,7 +11,7 @@ import {
 
 export const getTags = async (
   params: PaginatedSearchParams
-): Promise<ActionResponse<{ tags: Tag[]; isNext: boolean }>> => {
+): Promise<ActionResponse<{ tags: Tag[]; isNext: boolean; totalPages: number }>> => {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,
@@ -67,6 +67,7 @@ export const getTags = async (
       data: {
         tags: JSON.parse(JSON.stringify(tags)),
         isNext,
+        totalPages: Math.ceil(totalTags / limit),
       },
     };
   } catch (error) {
@@ -77,7 +78,12 @@ export const getTags = async (
 export const getTagQuestions = async (
   params: GetTagQuestionsParams
 ): Promise<
-  ActionResponse<{ tag: Tag; questions: Question[]; isNext: boolean }>
+  ActionResponse<{
+    tag: Tag;
+    questions: Question[];
+    isNext: boolean;
+    totalPages: number;
+  }>
 > => {
   const validationResult = await action({
     params,
@@ -124,6 +130,7 @@ export const getTagQuestions = async (
         tag: JSON.parse(JSON.stringify(tag)),
         questions: JSON.parse(JSON.stringify(questions)),
         isNext,
+        totalPages: Math.ceil(totalQuestions / limit),
       },
     };
   } catch (error) {

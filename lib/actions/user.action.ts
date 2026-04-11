@@ -20,6 +20,7 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
   ActionResponse<{
     users: User[];
     isNext: boolean;
+    totalPages: number;
   }>
 > {
   const validationResult = await action({
@@ -78,6 +79,7 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
       data: {
         users: JSON.parse(JSON.stringify(users)),
         isNext,
+        totalPages: Math.ceil(totalUsers / limit),
       },
     };
   } catch (error) {
@@ -120,6 +122,7 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
   ActionResponse<{
     questions: Question[];
     isNext: boolean;
+    totalPages: number;
   }>
 > {
   const validationResult = await action({
@@ -152,6 +155,7 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
       data: {
         questions: JSON.parse(JSON.stringify(questions)),
         isNext,
+        totalPages: Math.ceil(totalQuestions / limit),
       },
     };
   } catch (error) {
@@ -163,6 +167,7 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<
   ActionResponse<{
     answers: Answer[];
     isNext: boolean;
+    totalPages: number;
   }>
 > {
   const validationResult = await action({
@@ -196,6 +201,7 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<
       data: {
         answers: JSON.parse(JSON.stringify(answers)),
         isNext,
+        totalPages: Math.ceil(totalAnswers / limit),
       },
     };
   } catch (error) {

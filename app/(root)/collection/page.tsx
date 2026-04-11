@@ -6,8 +6,8 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { CollectionFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n-server";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -24,7 +24,7 @@ const Collections = async ({ searchParams }: SearchParams) => {
     filter: filter || "",
   });
 
-  const { collection, isNext } = data || {};
+  const { collection, isNext, totalPages } = data || {};
 
   return (
     <>
@@ -61,7 +61,11 @@ const Collections = async ({ searchParams }: SearchParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination
+        page={page}
+        isNext={isNext || false}
+        totalPages={totalPages || 0}
+      />
     </>
   );
 };

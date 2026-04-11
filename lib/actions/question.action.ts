@@ -281,6 +281,7 @@ export async function getRecommendedQuestions({
   return {
     questions: JSON.parse(JSON.stringify(questions)),
     isNext: total > skip + questions.length,
+    totalPages: Math.ceil(total / limit),
   };
 }
 
@@ -288,6 +289,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
   ActionResponse<{
     questions: Question[];
     isNext: boolean;
+    totalPages: number;
   }>
 > {
   const validationResult = await action({
@@ -314,7 +316,10 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
       const userId = session?.user?.id;
 
       if (!userId) {
-        return { success: true, data: { questions: [], isNext: false } };
+        return {
+          success: true,
+          data: { questions: [], isNext: false, totalPages: 0 },
+        };
       }
 
       const recommended = await getRecommendedQuestions({
@@ -369,6 +374,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
       data: {
         questions: JSON.parse(JSON.stringify(questions)),
         isNext,
+        totalPages: Math.ceil(totalQuestions / limit),
       },
     };
   } catch (error) {

@@ -6,8 +6,8 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n-server";
 import { getTags } from "@/lib/actions/tag.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();
@@ -20,7 +20,7 @@ const Tags = async ({ searchParams }: RouteParams) => {
     filter,
   });
 
-  const { tags, isNext } = data || {};
+  const { tags, isNext, totalPages } = data || {};
 
   return (
     <>
@@ -59,7 +59,11 @@ const Tags = async ({ searchParams }: RouteParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination
+        page={page}
+        isNext={isNext || false}
+        totalPages={totalPages || 0}
+      />
     </>
   );
 };

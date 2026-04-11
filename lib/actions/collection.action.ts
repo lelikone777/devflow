@@ -104,7 +104,9 @@ export async function hasSavedQuestion(
 
 export async function getSavedQuestions(
   params: PaginatedSearchParams
-): Promise<ActionResponse<{ collection: Collection[]; isNext: boolean }>> {
+): Promise<
+  ActionResponse<{ collection: Collection[]; isNext: boolean; totalPages: number }>
+> {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,
@@ -185,13 +187,15 @@ export async function getSavedQuestions(
 
     const questions = await Collection.aggregate(pipeline);
 
-    const isNext = totalCount.count > skip + questions.length;
+    const total = totalCount?.count ?? 0;
+    const isNext = total > skip + questions.length;
 
     return {
       success: true,
       data: {
         collection: JSON.parse(JSON.stringify(questions)),
         isNext,
+        totalPages: Math.ceil(total / limit),
       },
     };
   } catch (error) {

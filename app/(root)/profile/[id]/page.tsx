@@ -14,7 +14,6 @@ import ProfileLink from "@/components/user/ProfileLink";
 import Stats from "@/components/user/Stats";
 import UserAvatar from "@/components/UserAvatar";
 import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n-server";
 import {
   getUser,
   getUserAnswers,
@@ -22,6 +21,7 @@ import {
   getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();
@@ -77,8 +77,16 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
     error: userTopTagsError,
   } = await getUserTopTags({ userId: id });
 
-  const { questions, isNext: hasMoreQuestions } = userQuestions!;
-  const { answers, isNext: hasMoreAnswers } = userAnswers!;
+  const {
+    questions,
+    isNext: hasMoreQuestions,
+    totalPages: questionPages,
+  } = userQuestions!;
+  const {
+    answers,
+    isNext: hasMoreAnswers,
+    totalPages: answerPages,
+  } = userAnswers!;
   const { tags } = userTopTags!;
 
   return (
@@ -188,7 +196,11 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
               )}
             />
 
-            <Pagination page={page} isNext={hasMoreQuestions || false} />
+            <Pagination
+              page={page}
+              isNext={hasMoreQuestions || false}
+              totalPages={questionPages || 0}
+            />
           </TabsContent>
 
           <TabsContent value="answers" className="flex w-full flex-col gap-6">
@@ -216,7 +228,11 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
               )}
             />
 
-            <Pagination page={page} isNext={hasMoreAnswers || false} />
+            <Pagination
+              page={page}
+              isNext={hasMoreAnswers || false}
+              totalPages={answerPages || 0}
+            />
           </TabsContent>
         </Tabs>
 

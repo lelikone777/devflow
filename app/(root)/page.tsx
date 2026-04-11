@@ -10,8 +10,8 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
-import { getServerTranslator } from "@/lib/i18n-server";
 import { getQuestions } from "@/lib/actions/question.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "Dev Overflow | Home",
@@ -30,7 +30,7 @@ async function Home({ searchParams }: RouteParams) {
     filter,
   });
 
-  const { questions, isNext } = data || {};
+  const { questions, isNext, totalPages } = data || {};
 
   return (
     <>
@@ -88,7 +88,11 @@ async function Home({ searchParams }: RouteParams) {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination
+        page={page}
+        isNext={isNext || false}
+        totalPages={totalPages || 0}
+      />
     </>
   );
 }

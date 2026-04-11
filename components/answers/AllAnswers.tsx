@@ -11,6 +11,7 @@ interface Props extends ActionResponse<Answer[]> {
   page: number;
   isNext: boolean;
   totalAnswers: number;
+  totalPages: number;
   userId?: string;
 }
 
@@ -21,6 +22,7 @@ const AllAnswers = async ({
   success,
   error,
   totalAnswers,
+  totalPages,
   userId,
 }: Props) => {
   const { t } = await getServerTranslator();
@@ -54,7 +56,7 @@ const AllAnswers = async ({
         }
       />
 
-      <Pagination page={page} isNext={isNext} />
+      <Pagination page={page} isNext={isNext} totalPages={totalPages} />
     </div>
   );
 };

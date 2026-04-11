@@ -6,8 +6,8 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { UserFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_USERS } from "@/constants/states";
-import { getServerTranslator } from "@/lib/i18n-server";
 import { getUsers } from "@/lib/actions/user.action";
+import { getServerTranslator } from "@/lib/i18n-server";
 
 const Community = async ({ searchParams }: RouteParams) => {
   const { t } = await getServerTranslator();
@@ -20,7 +20,7 @@ const Community = async ({ searchParams }: RouteParams) => {
     filter,
   });
 
-  const { users, isNext } = data || {};
+  const { users, isNext, totalPages } = data || {};
 
   return (
     <div>
@@ -58,7 +58,11 @@ const Community = async ({ searchParams }: RouteParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination
+        page={page}
+        isNext={isNext || false}
+        totalPages={totalPages || 0}
+      />
     </div>
   );
 };

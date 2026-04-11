@@ -86,6 +86,7 @@ export async function getAnswers(params: GetAnswersParams): Promise<
     answers: Answer[];
     isNext: boolean;
     totalAnswers: number;
+    totalPages: number;
   }>
 > {
   const validationResult = await action({
@@ -136,6 +137,7 @@ export async function getAnswers(params: GetAnswersParams): Promise<
         answers: JSON.parse(JSON.stringify(answers)),
         isNext,
         totalAnswers,
+        totalPages: Math.ceil(totalAnswers / limit),
       },
     };
   } catch (error) {

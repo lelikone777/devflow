@@ -5,6 +5,20 @@ const mongoose = require("mongoose");
 const { execFileSync } = require("child_process");
 
 const DEFAULT_PASSWORD = "Devflow123!";
+const avatarUrls = [
+  "https://randomuser.me/api/portraits/men/11.jpg",
+  "https://randomuser.me/api/portraits/women/14.jpg",
+  "https://randomuser.me/api/portraits/men/22.jpg",
+  "https://randomuser.me/api/portraits/women/25.jpg",
+  "https://randomuser.me/api/portraits/men/31.jpg",
+  "https://randomuser.me/api/portraits/women/32.jpg",
+  "https://randomuser.me/api/portraits/men/41.jpg",
+  "https://randomuser.me/api/portraits/women/44.jpg",
+  "https://randomuser.me/api/portraits/men/52.jpg",
+  "https://randomuser.me/api/portraits/women/57.jpg",
+  "https://randomuser.me/api/portraits/men/63.jpg",
+  "https://randomuser.me/api/portraits/women/68.jpg",
+];
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -462,7 +476,7 @@ async function run() {
     const [name, username, location, bio] = seed;
     const email = `${username}@devflow.local`;
     const createdAt = new Date(Date.now() - (70 - index) * 24 * 60 * 60 * 1000);
-    const image = `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(username)}`;
+    const image = avatarUrls[index % avatarUrls.length];
     const user = await User.create({
       name,
       username,
@@ -672,9 +686,7 @@ async function run() {
   if (interactionDocs.length > 0) await Interaction.insertMany(interactionDocs);
 
   for (const tag of tagDocs) {
-    const count = questions.filter((question) =>
-      question.tags.some((questionTagId) => String(questionTagId) === String(tag._id))
-    ).length;
+    const count = await Question.countDocuments({ tags: tag._id });
     await Tag.updateOne({ _id: tag._id }, { $set: { questions: count } });
   }
 
