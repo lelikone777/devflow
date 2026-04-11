@@ -149,11 +149,17 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
 
       <section className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-[2]">
-          <TabsList className="background-light800_dark400 min-h-[42px] p-1">
-            <TabsTrigger value="top-posts" className="tab">
+          <TabsList className="light-border background-light900_dark300 min-h-[42px] rounded-md border p-1 shadow-light-300 dark:shadow-dark-200">
+            <TabsTrigger
+              value="top-posts"
+              className="tab background-light900_dark300"
+            >
               {t("profile.topPosts")}
             </TabsTrigger>
-            <TabsTrigger value="answers" className="tab">
+            <TabsTrigger
+              value="answers"
+              className="tab background-light900_dark300"
+            >
               {t("profile.answers")}
             </TabsTrigger>
           </TabsList>
@@ -197,6 +203,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
                     <AnswerCard
                       key={answer._id}
                       {...answer}
+                      userId={loggedInUser?.user?.id}
                       content={answer.content.slice(0, 270)}
                       containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
                       showReadMore

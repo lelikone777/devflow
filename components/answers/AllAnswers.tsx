@@ -11,6 +11,7 @@ interface Props extends ActionResponse<Answer[]> {
   page: number;
   isNext: boolean;
   totalAnswers: number;
+  userId?: string;
 }
 
 const AllAnswers = async ({
@@ -20,6 +21,7 @@ const AllAnswers = async ({
   success,
   error,
   totalAnswers,
+  userId,
 }: Props) => {
   const { t } = await getServerTranslator();
 
@@ -46,7 +48,9 @@ const AllAnswers = async ({
         success={success}
         empty={EMPTY_ANSWERS}
         render={(answers) =>
-          answers.map((answer) => <AnswerCard key={answer._id} {...answer} />)
+          answers.map((answer) => (
+            <AnswerCard key={answer._id} {...answer} userId={userId} />
+          ))
         }
       />
 

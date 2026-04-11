@@ -14,6 +14,7 @@ interface Props extends Answer {
   containerClasses?: string;
   showReadMore?: boolean;
   showActionBtns?: boolean;
+  userId?: string;
 }
 
 const AnswerCard = ({
@@ -27,6 +28,7 @@ const AnswerCard = ({
   containerClasses,
   showReadMore = false,
   showActionBtns = false,
+  userId,
 }: Props) => {
   const hasVotedPromise = hasVoted({
     targetId: _id,
@@ -74,6 +76,7 @@ const AnswerCard = ({
             <Votes
               targetType="answer"
               targetId={_id}
+              userId={userId}
               hasVotedPromise={hasVotedPromise}
               upvotes={upvotes}
               downvotes={downvotes}
