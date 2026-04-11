@@ -47,7 +47,7 @@ const SearchField = ({
 
   return (
     <div
-      className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
+      className={`background-light800_darkgradient flex min-h-[56px] w-full min-w-0 grow items-center gap-3 rounded-[10px] px-3 xs:gap-4 xs:px-4 ${otherClasses}`}
     >
       {iconPosition === "left" && (
         <Image
@@ -64,7 +64,7 @@ const SearchField = ({
         placeholder={placeholder}
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
-        className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
+        className="paragraph-regular no-focus min-w-0 placeholder text-dark400_light700 border-none shadow-none outline-none"
       />
 
       {iconPosition === "right" && (

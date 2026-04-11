@@ -16,7 +16,7 @@ const JobLocation = ({
   job_state,
 }: JobLocationProps) => {
   return (
-    <div className="primary-gradient flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5 shadow-sm">
+    <div className="primary-gradient flex max-w-full items-center justify-end gap-2 self-start rounded-2xl px-3 py-1.5 shadow-sm">
       {job_country && (
         <Image
           src={`https://flagsapi.com/${job_country}/flat/64.png`}
@@ -27,7 +27,7 @@ const JobLocation = ({
         />
       )}
 
-      <p className="body-semibold text-light-900">
+      <p className="body-semibold break-words text-light-900">
         {job_city && `${job_city}, `}
         {job_state && `${job_state}, `}
         {job_country && `${job_country}`}
@@ -50,7 +50,7 @@ const JobCard = ({ job }: { job: Job }) => {
   } = job;
 
   return (
-    <section className="background-light900_dark200 light-border shadow-light100_darknone flex flex-col items-start gap-6 rounded-lg border p-6 sm:flex-row sm:p-8">
+    <section className="background-light900_dark200 light-border shadow-light100_darknone flex flex-col items-start gap-5 rounded-lg border p-4 xs:p-5 sm:flex-row sm:gap-6 sm:p-8">
       <div className="flex w-full justify-end sm:hidden">
         <JobLocation
           job_country={job_country}
@@ -59,7 +59,7 @@ const JobCard = ({ job }: { job: Job }) => {
         />
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 xs:gap-6">
         {employer_logo ? (
           <Link
             href={employer_website ?? "/jobs"}
@@ -85,7 +85,7 @@ const JobCard = ({ job }: { job: Job }) => {
 
       <div className="w-full">
         <div className="flex-between flex-wrap gap-2">
-          <p className="base-semibold text-dark200_light900">
+          <p className="base-semibold break-words text-dark200_light900">
             {processJobTitle(job_title)}
           </p>
 
@@ -98,12 +98,12 @@ const JobCard = ({ job }: { job: Job }) => {
           </div>
         </div>
 
-        <p className="body-regular text-dark500_light700  mt-2 line-clamp-2">
+        <p className="body-regular text-dark500_light700 mt-2 line-clamp-3 break-words">
           {job_description?.slice(0, 200)}
         </p>
 
-        <div className="flex-between mt-8 flex-wrap gap-6">
-          <div className="flex flex-wrap items-center gap-6">
+        <div className="flex-between mt-6 flex-wrap gap-4 xs:mt-8 xs:gap-6">
+          <div className="flex flex-wrap items-center gap-4 xs:gap-6">
             <div className="flex items-center gap-2">
               <Image
                 src="/icons/clock-2.svg"
@@ -132,7 +132,7 @@ const JobCard = ({ job }: { job: Job }) => {
           <Link
             href={job_apply_link ?? "/jobs"}
             target="_blank"
-            className="interactive-inline flex items-center gap-2"
+            className="interactive-inline flex w-full items-center justify-end gap-2 sm:w-auto"
           >
             <p className="body-semibold primary-text-gradient">View job</p>
 

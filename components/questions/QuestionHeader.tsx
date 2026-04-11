@@ -24,8 +24,8 @@ const QuestionHeader = ({
 
   return (
     <div className="flex-start w-full flex-col">
-      <div className="flex w-full flex-col-reverse justify-between">
-        <div className="flex items-center justify-start gap-1">
+      <div className="flex w-full flex-col-reverse justify-between gap-4">
+        <div className="flex min-w-0 items-center justify-start gap-1.5">
           <UserAvatar
             id={author._id}
             name={author.name}
@@ -34,13 +34,13 @@ const QuestionHeader = ({
             fallbackClassName="text-[10px]"
           />
           <Link href={ROUTES.PROFILE(author._id)}>
-            <p className="paragraph-semibold text-dark300_light700">
+            <p className="paragraph-semibold text-dark300_light700 line-clamp-1 break-words">
               {author.name}
             </p>
           </Link>
         </div>
 
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-3 xs:gap-4">
           <Suspense fallback={<div>Loading...</div>}>
             <Votes
               targetType="question"
@@ -62,7 +62,7 @@ const QuestionHeader = ({
         </div>
       </div>
 
-      <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">
+      <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full break-words">
         {title}
       </h2>
     </div>

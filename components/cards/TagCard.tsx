@@ -37,10 +37,10 @@ const TagCard = ({
 
   const Content = (
     <>
-      <Badge className="subtle-medium interactive-compact border border-primary-500/15 bg-primary-100 text-primary-500 dark:border-primary-500/20 dark:bg-primary-500/16 dark:text-primary-100 flex flex-row gap-2 rounded-md px-4 py-2 uppercase shadow-none">
-        <div className="flex-center space-x-2">
+      <Badge className="subtle-medium interactive-compact border border-primary-500/15 bg-primary-100 text-primary-500 dark:border-primary-500/20 dark:bg-primary-500/16 dark:text-primary-100 flex max-w-full flex-row gap-2 rounded-md px-3 py-2 uppercase shadow-none xs:px-4">
+        <div className="flex-center min-w-0 space-x-2">
           <i className={`${iconClass} text-sm text-inherit`}></i>
-          <span>{name}</span>
+          <span className="truncate">{name}</span>
         </div>
 
         {remove && (
@@ -84,7 +84,7 @@ const TagCard = ({
       href={ROUTES.TAG(_id)}
       className="shadow-light100_darknone interactive-card block rounded-2xl"
     >
-      <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-[260px]">
+      <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-5 py-6 xs:px-6 xs:py-8 sm:w-[260px] sm:px-8 sm:py-10">
         <div className="flex items-center justify-between gap-3">
           <div className="w-fit rounded-sm border border-primary-500/15 bg-primary-100 px-5 py-1.5 dark:border-primary-500/20 dark:bg-primary-500/16">
             <p className="paragraph-semibold text-primary-500 dark:text-primary-100">

@@ -22,8 +22,8 @@ const ProfileHeader = async ({ user, isCurrentUser }: ProfileHeaderProps) => {
           id={user._id}
           name={user.name}
           imageUrl={user.image}
-          className="size-[140px] rounded-full object-cover"
-          fallbackClassName="text-6xl font-bolder"
+          className="size-[100px] rounded-full object-cover xs:size-[120px] sm:size-[140px]"
+          fallbackClassName="text-4xl font-bolder xs:text-5xl sm:text-6xl"
         />
 
         <div className="mt-3">
@@ -65,7 +65,7 @@ const ProfileHeader = async ({ user, isCurrentUser }: ProfileHeaderProps) => {
       <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
         {isCurrentUser && (
           <Link href="/profile/edit">
-            <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-44 px-4 py-3">
+            <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 w-full px-4 py-3 xs:w-auto xs:min-w-44">
               {t("profile.editProfile")}
             </Button>
           </Link>

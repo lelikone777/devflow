@@ -106,7 +106,7 @@ const LocationInput = ({ initialValue }: LocationInputProps) => {
   }, [getParam, locationValue, pushQueryParam, removeQueryParams]);
 
   return (
-    <div className="background-light800_darkgradient flex min-h-[56px] min-w-[240px] grow items-center gap-4 rounded-[10px] px-4 sm:max-w-[320px]">
+    <div className="background-light800_darkgradient flex min-h-[56px] w-full min-w-0 grow items-center gap-3 rounded-[10px] px-3 xs:px-4 sm:max-w-[320px]">
       <Image
         src="/icons/carbon-location.svg"
         alt="location"
@@ -119,7 +119,7 @@ const LocationInput = ({ initialValue }: LocationInputProps) => {
         placeholder={t("jobs.locationPlaceholder")}
         value={locationValue}
         onChange={(event) => setLocationValue(event.target.value)}
-        className="paragraph-regular no-focus text-dark400_light700 border-none shadow-none outline-none"
+        className="paragraph-regular no-focus min-w-0 text-dark400_light700 border-none shadow-none outline-none"
       />
     </div>
   );
@@ -146,11 +146,11 @@ const JobsFilter = () => {
         otherClasses="flex-1 max-sm:w-full"
       />
 
-      <div className="flex flex-wrap gap-5">
+      <div className="flex flex-wrap gap-3 xs:gap-4 sm:gap-5">
         <LocationInput key={currentLocation} initialValue={currentLocation} />
 
         <Select value="us" disabled>
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] cursor-not-allowed border px-4 opacity-70 sm:max-w-[210px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full cursor-not-allowed border px-3 opacity-70 xs:px-4 sm:max-w-[210px]">
             <Image
               src="/icons/carbon-location.svg"
               alt="country"
@@ -173,7 +173,7 @@ const JobsFilter = () => {
           value={getParam("datePosted", "all")}
           onValueChange={(value) => handleUpdateParams("datePosted", value)}
         >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[180px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full border px-3 xs:px-4 sm:max-w-[180px]">
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder={t("jobs.datePosted")} />
             </div>
@@ -193,7 +193,7 @@ const JobsFilter = () => {
           value={getParam("remote", "any")}
           onValueChange={(value) => handleUpdateParams("remote", value)}
         >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[180px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full border px-3 xs:px-4 sm:max-w-[180px]">
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder={t("jobs.workMode")} />
             </div>
@@ -213,7 +213,7 @@ const JobsFilter = () => {
           value={getParam("employmentType", "any")}
           onValueChange={(value) => handleUpdateParams("employmentType", value)}
         >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[190px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full border px-3 xs:px-4 sm:max-w-[190px]">
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder={t("jobs.employmentType")} />
             </div>
@@ -233,7 +233,7 @@ const JobsFilter = () => {
           value={getParam("requirement", "any")}
           onValueChange={(value) => handleUpdateParams("requirement", value)}
         >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[190px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full border px-3 xs:px-4 sm:max-w-[190px]">
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder={t("jobs.requirement")} />
             </div>
@@ -253,7 +253,7 @@ const JobsFilter = () => {
           value={getParam("radius", "any")}
           onValueChange={(value) => handleUpdateParams("radius", value)}
         >
-          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] border px-4 sm:max-w-[170px]">
+          <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 min-h-[56px] w-full border px-3 xs:px-4 sm:max-w-[170px]">
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder={t("jobs.radius")} />
             </div>

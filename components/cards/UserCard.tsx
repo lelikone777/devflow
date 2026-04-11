@@ -6,8 +6,8 @@ import type { User } from "@/types";
 import UserAvatar from "../UserAvatar";
 
 const UserCard = ({ _id, name, image, username }: User) => (
-  <div className="shadow-light100_darknone interactive-card w-full rounded-2xl xs:w-[230px]">
-    <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8">
+  <div className="shadow-light100_darknone interactive-card w-full rounded-2xl xs:max-w-[230px]">
+    <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-5 xs:p-6 sm:p-8">
       <UserAvatar
         id={_id}
         name={name}

@@ -74,7 +74,7 @@ const Pagination = ({
   const showFirstPage = pageRange[0] > 1;
   const showLastPage = pageRange[pageRange.length - 1] < safeTotalPages;
   const baseButtonClasses =
-    "btn flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border px-3 transition-all duration-300";
+    "btn flex min-h-[38px] min-w-[38px] items-center justify-center rounded-xl border px-2.5 transition-all duration-300 xs:min-h-[40px] xs:min-w-[40px] xs:px-3";
   const inactiveButtonClasses =
     "background-light900_dark400 !border-light-700/90 dark:!border-light-400/12 !text-dark-300 dark:!text-light-700 hover:-translate-y-0.5 hover:!border-primary-500/35 hover:!text-dark-200 hover:shadow-light-300 dark:hover:!border-primary-500/45 dark:hover:!text-light-900 dark:hover:bg-dark-400 dark:hover:shadow-dark-200";
   const activeButtonClasses =
@@ -96,7 +96,7 @@ const Pagination = ({
         className={cn(
           baseButtonClasses,
           inactiveButtonClasses,
-          "min-w-[92px]",
+          "min-w-[74px] xs:min-w-[92px]",
           currentPage <= 1 && "pointer-events-none opacity-50"
         )}
       >
@@ -161,7 +161,7 @@ const Pagination = ({
         className={cn(
           baseButtonClasses,
           inactiveButtonClasses,
-          "min-w-[92px]",
+          "min-w-[74px] xs:min-w-[92px]",
           currentPage >= safeTotalPages && "pointer-events-none opacity-50"
         )}
       >

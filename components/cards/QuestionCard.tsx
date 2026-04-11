@@ -22,15 +22,15 @@ const QuestionCard = async ({
   const { t } = await getServerTranslator();
 
   return (
-    <div className="card-wrapper interactive-card rounded-[10px] p-9 sm:px-11">
-      <div className="flex flex-col-reverse items-center justify-between gap-5 sm:flex-row">
+    <div className="card-wrapper interactive-card rounded-[10px] p-5 xs:p-6 sm:px-11">
+      <div className="flex flex-col-reverse items-start justify-between gap-4 sm:flex-row sm:items-center sm:gap-5">
         <div className="flex-1">
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
             {getTimeStamp(createdAt)}
           </span>
 
           <Link href={ROUTES.QUESTION(_id)} className="interactive-inline w-fit">
-            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1 transition-colors duration-300 hover:text-primary-500">
+            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-2 flex-1 break-words transition-colors duration-300 hover:text-primary-500">
               {title}
             </h3>
           </Link>

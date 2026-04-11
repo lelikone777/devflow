@@ -95,7 +95,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
         reputationPoints={user.reputation || 0}
       />
 
-      <section className="mt-10 flex gap-10">
+      <section className="mt-10 flex flex-col gap-8 lg:flex-row lg:gap-10">
         <ProfileActivityTabs
           page={page}
           loggedInUserId={loggedInUser?.user?.id}

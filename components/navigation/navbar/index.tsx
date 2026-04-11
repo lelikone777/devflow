@@ -14,7 +14,7 @@ const Navbar = async () => {
   const session = await auth();
 
   return (
-    <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5  p-6 shadow-light-300 dark:shadow-none sm:px-12">
+    <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-2 px-3 py-4 shadow-light-300 dark:shadow-none xs:px-4 sm:gap-4 sm:px-6 sm:py-5 lg:px-12">
       <Link href={ROUTES.HOME} className="interactive-inline flex items-center gap-1">
         <Image
           src="/images/site-logo.svg"
@@ -30,7 +30,7 @@ const Navbar = async () => {
 
       <GlobalSearch />
 
-      <div className="flex-between gap-5">
+      <div className="flex-between shrink-0 gap-2 xs:gap-3 sm:gap-5">
         <LanguageSwitcher />
         <Theme />
         {session?.user?.id && (

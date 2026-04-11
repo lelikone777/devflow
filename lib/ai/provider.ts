@@ -18,7 +18,7 @@ export interface ResolvedAIProviderConfig {
 }
 
 const readEnv = (
-  env: NodeJS.ProcessEnv,
+  env: Partial<NodeJS.ProcessEnv>,
   key: keyof NodeJS.ProcessEnv
 ): string | undefined => {
   const value = env[key]?.trim();
@@ -27,7 +27,7 @@ const readEnv = (
 };
 
 export function resolveAIProviderConfig(
-  env: NodeJS.ProcessEnv = process.env
+  env: Partial<NodeJS.ProcessEnv> = process.env
 ): ResolvedAIProviderConfig {
   const groqApiKey = readEnv(env, "GROQ_API_KEY");
 
@@ -68,7 +68,7 @@ export function resolveAIProviderConfig(
   );
 }
 
-export function getAIAnswerModel(env: NodeJS.ProcessEnv = process.env) {
+export function getAIAnswerModel(env: Partial<NodeJS.ProcessEnv> = process.env) {
   const config = resolveAIProviderConfig(env);
   const provider = createOpenAI({
     name: config.provider,
