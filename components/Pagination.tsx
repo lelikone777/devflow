@@ -74,11 +74,13 @@ const Pagination = ({
   const showFirstPage = pageRange[0] > 1;
   const showLastPage = pageRange[pageRange.length - 1] < safeTotalPages;
   const baseButtonClasses =
-    "light-border-2 btn flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border px-3 transition-all duration-300";
+    "btn flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border px-3 transition-all duration-300";
   const inactiveButtonClasses =
-    "background-light900_dark300 text-dark200_light900 hover:-translate-y-0.5 hover:shadow-light-300 dark:hover:shadow-dark-300";
+    "background-light900_dark400 !border-light-700/90 dark:!border-light-400/12 !text-dark-300 dark:!text-light-700 hover:-translate-y-0.5 hover:!border-primary-500/35 hover:!text-dark-200 hover:shadow-light-300 dark:hover:!border-primary-500/45 dark:hover:!text-light-900 dark:hover:bg-dark-400 dark:hover:shadow-dark-200";
   const activeButtonClasses =
-    "primary-gradient border-transparent text-light-900 shadow-light-300";
+    "primary-gradient !border-primary-500/70 !text-dark-100 shadow-[0_16px_40px_-20px_rgba(255,112,0,0.9)] dark:shadow-[0_18px_45px_-22px_rgba(255,112,0,0.95)]";
+  const buttonLabelClasses =
+    "body-semibold font-space-grotesk tracking-[0.01em]";
 
   return (
     <div
@@ -90,6 +92,7 @@ const Pagination = ({
       <Button
         onClick={() => handleNavigation(currentPage - 1)}
         disabled={currentPage <= 1}
+        variant="outline"
         className={cn(
           baseButtonClasses,
           inactiveButtonClasses,
@@ -97,20 +100,23 @@ const Pagination = ({
           currentPage <= 1 && "pointer-events-none opacity-50"
         )}
       >
-        <p className="body-medium">{t("pagination.prev")}</p>
+        <p className={buttonLabelClasses}>{t("pagination.prev")}</p>
       </Button>
 
       {showFirstPage && (
         <Button
           onClick={() => handleNavigation(1)}
+          variant="outline"
           className={cn(baseButtonClasses, inactiveButtonClasses)}
         >
-          <span className="body-medium">1</span>
+          <span className={buttonLabelClasses}>1</span>
         </Button>
       )}
 
       {showLeadingEllipsis && (
-        <span className="body-medium text-dark400_light700 px-1">...</span>
+        <span className="body-semibold px-1 text-dark400_light800 dark:!text-light-500">
+          ...
+        </span>
       )}
 
       {pageRange.map((pageNumber) => {
@@ -120,32 +126,38 @@ const Pagination = ({
           <Button
             key={pageNumber}
             onClick={() => handleNavigation(pageNumber)}
+            variant="outline"
+            aria-current={isActive ? "page" : undefined}
             className={cn(
               baseButtonClasses,
               isActive ? activeButtonClasses : inactiveButtonClasses
             )}
           >
-            <span className="body-medium">{pageNumber}</span>
+            <span className={buttonLabelClasses}>{pageNumber}</span>
           </Button>
         );
       })}
 
       {showTrailingEllipsis && (
-        <span className="body-medium text-dark400_light700 px-1">...</span>
+        <span className="body-semibold px-1 text-dark400_light800 dark:!text-light-500">
+          ...
+        </span>
       )}
 
       {showLastPage && (
         <Button
           onClick={() => handleNavigation(safeTotalPages)}
+          variant="outline"
           className={cn(baseButtonClasses, inactiveButtonClasses)}
         >
-          <span className="body-medium">{safeTotalPages}</span>
+          <span className={buttonLabelClasses}>{safeTotalPages}</span>
         </Button>
       )}
 
       <Button
         onClick={() => handleNavigation(currentPage + 1)}
         disabled={currentPage >= safeTotalPages}
+        variant="outline"
         className={cn(
           baseButtonClasses,
           inactiveButtonClasses,
@@ -153,7 +165,7 @@ const Pagination = ({
           currentPage >= safeTotalPages && "pointer-events-none opacity-50"
         )}
       >
-        <p className="body-medium">{t("pagination.next")}</p>
+        <p className={buttonLabelClasses}>{t("pagination.next")}</p>
       </Button>
     </div>
   );

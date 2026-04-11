@@ -32,17 +32,28 @@ describe("components/Pagination", () => {
     expect(screen.getByText("1")).toBeTruthy();
     expect(screen.getByText("2")).toBeTruthy();
     expect(screen.getByText("3")).toBeTruthy();
-    expect(screen.getByText("Назад")).toBeTruthy();
-    expect(screen.getByText("Вперёд")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Назад" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Вперёд" })).toBeTruthy();
   });
 
   it("navigates to the next page while preserving other params", () => {
     render(<Pagination page={2} totalPages={5} isNext />);
 
-    fireEvent.click(screen.getByRole("button", { name: /вперёд/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Вперёд" }));
 
     expect(routerPushMock).toHaveBeenCalledWith(
       "/?page=3&filter=popular"
     );
+  });
+
+  it("marks the active page and keeps readable dark-theme classes", () => {
+    render(<Pagination page={2} totalPages={5} isNext />);
+
+    const activePageButton = screen.getByRole("button", { name: "2" });
+    const nextButton = screen.getByRole("button", { name: "Вперёд" });
+
+    expect(activePageButton.getAttribute("aria-current")).toBe("page");
+    expect(activePageButton.className).toContain("!text-dark-100");
+    expect(nextButton.className).toContain("dark:!text-light-700");
   });
 });
